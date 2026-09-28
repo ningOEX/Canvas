@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <button>下载</button>
+    <script>
+        let canvas1
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas1 = canvas
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 绘制同心圆
+            for (let index = 0; index <= 5; index++) {
+                ctx.beginPath()
+                ctx.arc(100, 100, index * 20, 0, Math.PI * 2)
+                ctx.stroke()
+            }
+        })();
+
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 绘制图像
+            ctx.drawImage(canvas1, 100, 100)
+
+            // 获取按钮
+            const btn = document.querySelector('button')
+
+            btn.onclick = function () {
+                const img = canvas1.toDataURL()
+
+                // 创建下载链接
+                const a = document.createElement('a')
+                a.href = img
+                a.download = 'canvas图像'
+                a.click()
+            }
+        })();
+
+
+
+    </script>
+</body>
+
+</html>

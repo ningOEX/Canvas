@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 260
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+        
+            // 创建video
+            const video = document.createElement('video')
+            video.src = '../images/火鸟.mp4'
+            video.autoplay = true //加载一点就播放
+            video.loop = true //循环播放
+            video.muted = true // 静音
+            video.play() // 播放
+            video.addEventListener('play',function(){
+                draw()
+            })
+
+            ctx.arc(200,130,130,0,Math.PI * 2)
+            ctx.clip()
+            ctx.beginPath()
+
+            function draw(){
+                ctx.clearRect(0,0,400,260)
+                ctx.drawImage(video,0,0,400,260)
+                requestAnimationFrame(draw)
+            }
+
+            
+        })();
+
+    </script>
+</body>
+
+</html>

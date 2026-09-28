@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = window.innerWidth
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+            
+            const img = new Image()
+            img.src = "../images/renshen.png"
+            img.onload = function (e) {
+                let i = 0
+                let j = 0
+                function show() {
+                    ctx.clearRect(0,0,window.innerWidth,400)
+                    ctx.drawImage(img, 0, i * 124, img.width, 124, j * 10, 0, img.width, 124)
+                    ctx.strokeStyle = "#fac"
+                    ctx.moveTo(0,126)
+                    ctx.lineTo(j*10,126)
+                    ctx.stroke()
+                    i++;
+                    j++;
+                    
+                    if(i === 12) i = 0
+                }
+                setInterval(show, 100);
+            }
+        })();
+
+    </script>
+</body>
+
+</html>

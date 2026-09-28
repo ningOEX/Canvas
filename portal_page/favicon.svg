@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- 红底印章，对应站点品牌色  vermilion #c1272d -->
+  <rect x="2" y="2" width="60" height="60" rx="9" ry="9" fill="#c1272d"/>
+  <!-- 白色「華」字，居中；字体回退到系统中文字体以保证渲染 -->
+  <text x="32" y="32"
+        text-anchor="middle"
+        dominant-baseline="central"
+        font-family="'STKaiti','KaiTi','Kaiti SC','Songti SC','SimSun','Noto Serif CJK SC',serif"
+        font-size="38"
+        font-weight="700"
+        fill="#ffffff">華</text>
+</svg>
+

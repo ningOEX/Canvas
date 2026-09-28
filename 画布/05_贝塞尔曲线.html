@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const canvas = document.createElement('canvas')
+        canvas.width = 400
+        canvas.height = 400
+        const ctx = canvas.getContext('2d')
+        document.body.append(canvas)
+
+        // 
+        ctx.beginPath()
+        ctx.moveTo(100, 100) // 起点
+        ctx.quadraticCurveTo(300, 150, 100, 250) // 一个控制点，一个终点
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.arc(100, 100, 4, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.beginPath()
+        ctx.arc(300, 150, 4, 0, Math.PI * 2)
+        ctx.fill()
+        ctx.beginPath()
+        ctx.arc(100, 250, 4, 0, Math.PI * 2)
+        ctx.fill()
+
+
+    </script>
+</body>
+
+</html>

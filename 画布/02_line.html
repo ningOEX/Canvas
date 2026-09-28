@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画布</title>
+  <style>
+  </style>
+</head>
+
+<body>
+  <script>
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+
+      // 边框
+      ctx.beginPath() // 结束画笔，开启新一笔。
+      ctx.rect(0, 0, 400, 400)
+      ctx.strokeStyle = "#000"
+      ctx.stroke() // 描边绘制
+
+
+      ctx.lineWidth = 20
+      ctx.lineJoin = "round"
+      ctx.beginPath()
+      ctx.moveTo(50, 50)
+      ctx.lineTo(200, 50)
+      ctx.lineTo(150, 350)
+      ctx.closePath()
+      ctx.stroke()
+    })();
+
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+
+      // 边框
+      ctx.beginPath() // 结束画笔,新的起点不关我事
+      ctx.rect(0, 0, 400, 400)
+      ctx.strokeStyle = "#000"
+      ctx.stroke() // 描边绘制
+
+
+      // 绘制线条 (竖线)
+      ctx.beginPath()
+      ctx.strokeStyle = '#fac'
+      ctx.moveTo(80, 0)
+      ctx.lineTo(80, 200)
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.strokeStyle = '#fac'
+      ctx.moveTo(320, 0)
+      ctx.lineTo(320, 200)
+      ctx.stroke()
+
+
+      // 偏移量
+      ctx.beginPath()
+      ctx.lineWidth = 4
+      ctx.strokeStyle = 'red'
+      ctx.setLineDash([40, 10])
+      ctx.lineDashOffset = 20
+      ctx.moveTo(80, 20)
+      ctx.lineTo(320, 20)
+      ctx.stroke()
+
+
+      // 无偏移量
+      ctx.beginPath()
+      ctx.lineWidth = 4
+      ctx.strokeStyle = '#000'
+      ctx.lineDashOffset = 0
+      ctx.moveTo(80, 50)
+      ctx.lineTo(320, 50)
+      ctx.stroke()
+
+
+      // 绘制线条
+      ctx.beginPath()
+      ctx.lineWidth = 4
+      ctx.strokeStyle = '#caf'
+      ctx.moveTo(80, 100)
+      ctx.lineTo(320, 100)
+      ctx.setLineDash([320]) // 设置虚线
+      ctx.lineDashOffset = 310
+      ctx.stroke()
+
+      function move() {
+        ctx.lineDashOffset -= 1
+        ctx.stroke()
+
+        if (ctx.lineDashOffset > 0) {
+          requestAnimationFrame(move)
+        }
+      }
+      move()
+    })()
+  </script>
+</body>
+
+</html>

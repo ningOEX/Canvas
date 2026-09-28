@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.rect(100,100,200,200)
+            ctx.stroke()
+
+            // 裁剪 
+            ctx.beginPath()
+            ctx.arc(200,200,100,0,Math.PI * 2)
+            ctx.arc(200,200,80,0,Math.PI * 2)
+            ctx.arc(200,200,60,0,Math.PI * 2)
+            ctx.arc(200,200,40,0,Math.PI * 2)
+            ctx.arc(200,200,20,0,Math.PI * 2)
+            ctx.clip('evenodd')
+
+            ctx.beginPath()
+            ctx.fillStyle="#fac"
+            ctx.rect(100,100,200,200)
+            ctx.fill()
+
+        })();
+
+
+    </script>
+</body>
+
+</html>

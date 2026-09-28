@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.font = "bold italic 100px serif"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.fillText('文字', 200, 200)
+
+
+            ctx.beginPath()
+            ctx.fillStyle = 'red'
+            ctx.arc(200, 200, 4, 0, Math.PI * 2)
+            ctx.fill()
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.font = "bold italic 100px serif"
+            ctx.textAlign = "center"
+            ctx.textBaseline = "middle"
+            ctx.strokeText('文字', 200, 200)
+
+
+            ctx.beginPath()
+            ctx.fillStyle = 'red'
+            ctx.arc(200, 200, 4, 0, Math.PI * 2)
+            ctx.fill()
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 模糊滤镜
+            ctx.filter = "blur(10px)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 高亮 <1变暗 >1变亮
+            ctx.filter = "brightness(1.5)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 对比度 
+            ctx.filter = "contrast(1.5)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 饱和度 
+            ctx.filter = "saturate(1.5)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 灰度 
+            ctx.filter = "grayscale(1)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 深褐色
+            ctx.filter = "sepia(1)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 阴影
+            ctx.filter = "drop-shadow(0 0 2em #caf)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 100, 50, 200, 120)
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 反转绘图
+            ctx.filter = "invert(1)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 220
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 色相旋转
+            ctx.filter = "hue-rotate(45deg)"
+
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+            }
+        })();
+    </script>
+</body>
+
+</html>

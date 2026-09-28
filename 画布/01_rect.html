@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画布</title>
+  <style>
+    canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+
+  <script>
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+      ctx.rect(50, 50, 200, 100)
+      ctx.fillStyle = "#fac"
+      ctx.strokeStyle = '#caf'
+      ctx.lineWidth = 6
+      ctx.stroke()
+      ctx.fill()
+      ctx.beginPath()
+    })()
+  </script>
+</body>
+
+</html>

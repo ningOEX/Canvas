@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画布</title>
+  <style>
+  </style>
+</head>
+
+<body>
+
+  <script>
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+
+      // 边框
+      ctx.rect(0, 0, 400, 400)
+      ctx.strokeStyle = "#000"
+      ctx.stroke() // 描边绘制
+      ctx.beginPath() // 结束画笔，开启新一笔。
+
+      // 圆角矩形
+      ctx.roundRect(100, 50, 100, 100, [0, 0, 10, 20])
+      ctx.strokeStyle = "#caf"
+      ctx.stroke() // 描边绘制
+      ctx.beginPath()// 结束画笔，开启新一笔。
+
+      // 圆角矩形
+      ctx.roundRect(100, 200, 100, 100, 5)
+      ctx.fillStyle = "#fac"
+      ctx.fill() // 填充绘制
+    })()
+  </script>
+</body>
+
+</html>

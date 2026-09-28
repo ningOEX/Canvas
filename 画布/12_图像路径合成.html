@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "source-over"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "source-out"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "source-in"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "source-atop"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+
+        // --------------------------
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "destination-over"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "destination-out"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "destination-in"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "destination-atop"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+
+        // -----------
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "xor"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "copy"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "multiply"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "hue"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "exclusion"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "luminosity"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+                (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 200
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            ctx.beginPath()
+            ctx.fillStyle = '#caf'
+            ctx.fillRect(25, 25, 100, 100)
+
+            // 图像合成
+            ctx.globalCompositeOperation = "hard-light"
+
+            ctx.beginPath()
+            ctx.fillStyle = '#fac'
+            ctx.fillRect(75, 75, 100, 100)
+        })();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const canvas = document.createElement('canvas')
+        canvas.width = 400
+        canvas.height = 400
+        const ctx = canvas.getContext('2d')
+        document.body.append(canvas)
+
+        // 二次贝塞尔曲线
+        ctx.beginPath()
+        ctx.moveTo(50, 200) // 起点
+        ctx.bezierCurveTo(100, 100, 300, 300, 350, 200) // 两个控制点，一个终点
+        ctx.stroke()
+
+        // 基准点
+        ctx.beginPath()
+        ctx.fillStyle = "#fac"
+        ctx.arc(50, 200, 4, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.beginPath()
+        ctx.arc(100, 100, 4, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.beginPath()
+        ctx.arc(300, 300, 4, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.beginPath()
+        ctx.arc(350, 200, 4, 0, Math.PI * 2)
+        ctx.fill()
+
+        ctx.beginPath()
+        ctx.strokeStyle = '#fac'
+        ctx.setLineDash([20,30,10,5])
+        ctx.moveTo(50,200)
+        ctx.lineTo(350,200)
+        ctx.stroke()
+
+    </script>
+</body>
+
+</html>

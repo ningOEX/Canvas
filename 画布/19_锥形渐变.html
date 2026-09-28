@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 创建锥形渐变
+            const gradient = ctx.createConicGradient(Math.PI / 2,200,200)
+            gradient.addColorStop(0,'#fac')
+            gradient.addColorStop(0.25,'#acf')
+            gradient.addColorStop(0.5,'#caf')
+            gradient.addColorStop(0.75,'#cfa')
+            gradient.addColorStop(0.95,'#fca')
+            gradient.addColorStop(1,'#fac')
+
+            ctx.fillStyle = gradient
+            ctx.arc(200,200,200,0,Math.PI * 2)
+            ctx.fill()
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            // 创建锥形渐变
+            const gradient = ctx.createConicGradient(Math.PI / 2,200,200)
+            gradient.addColorStop(0,'#fac')
+            gradient.addColorStop(0.25,'#acf')
+            gradient.addColorStop(0.5,'#caf')
+            gradient.addColorStop(0.75,'#cfa')
+            gradient.addColorStop(0.95,'#fca')
+            gradient.addColorStop(1,'#fac')
+
+            ctx.fillStyle = gradient
+            ctx.arc(200,200,200,0,Math.PI * 2)
+            ctx.fill()
+
+            ctx.beginPath()
+            ctx.fillStyle = '#FFF'
+            ctx.arc(200,200,150,0,Math.PI * 2)
+            ctx.fill()
+        })();
+
+        
+    </script>
+</body>
+
+</html>

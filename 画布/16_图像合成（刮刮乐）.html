@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+            position: absolute;
+        }
+
+        div.text {
+            width: 400px;
+            height: 200px;
+            text-align: center;
+            line-height: 200px;
+            font-size: 2.5em;
+            color: #caf;
+            background-color: #ffaacca4;
+            user-select: none;
+            position: absolute;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="text">RXT 5070 Ti 16G</div>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 200
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+
+            ctx.fillStyle = "#ccc"
+            ctx.fillRect(0, 0, 400, 200)
+
+            ctx.globalCompositeOperation = "destination-out"
+
+            ctx.beginPath()
+            ctx.lineWidth = 20
+            ctx.strokeStyle = '#fac'
+            ctx.lineCap = "round"
+            ctx.lineJoin = "round"
+
+            let isDrawing = false
+
+            const onMouseDown = (e) => {
+                isDrawing = true
+                ctx.beginPath()              // 开启新路径，避免和上一次连起来
+                ctx.moveTo(e.offsetX, e.offsetY)
+                // 只在这里绑定 move/up，避免重复绑定
+                canvas.addEventListener('mousemove', onMouseMove)
+                window.addEventListener('mouseup', onMouseUp)   // 用 window 防止鼠标移出 canvas 后松开失效
+            }
+
+            const onMouseMove = (e) => {
+                if (!isDrawing) return
+                ctx.lineTo(e.offsetX, e.offsetY)
+                ctx.stroke()
+            }
+
+            const onMouseUp = () => {
+                isDrawing = false
+                cleanup()
+            }
+
+            const cleanup = () => {
+                canvas.removeEventListener('mousemove', onMouseMove)
+                window.removeEventListener('mouseup', onMouseUp)
+            }
+
+            // 绑定入口
+            canvas.addEventListener('mousedown', onMouseDown)
+
+        })();
+    </script>
+</body>
+
+</html>

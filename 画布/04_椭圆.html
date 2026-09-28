@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const canvas = document.createElement('canvas')
+        canvas.width = 400
+        canvas.height = 400
+        const ctx = canvas.getContext('2d')
+        document.body.append(canvas)
+
+        // 
+        ctx.beginPath()
+        ctx.strokeStyle = "#caf"
+        ctx.lineWidth = 4
+        ctx.ellipse(100, 100, 100, 50, 0, 0, Math.PI * 2)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.strokeStyle = "#caf"
+        ctx.lineWidth = 4
+        ctx.ellipse(300, 100, 100, 50, 0, 0, Math.PI / 2, true)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.strokeStyle = "#caf"
+        ctx.lineWidth = 4
+        ctx.ellipse(100, 300, 100, 50, 0, Math.PI / 2, Math.PI, true)
+        ctx.stroke()
+
+
+        const arr = new Array(3).fill(0)
+        arr.forEach((_, i) => {
+            ctx.beginPath()
+            const deg = i === 0 ? 1 : i * 2
+            ctx.strokeStyle = "#caf"
+            ctx.lineWidth = 4
+            ctx.ellipse(300, 300, 100, 50, Math.PI / deg, 0, Math.PI * 2)
+            ctx.stroke()
+        })
+
+    </script>
+</body>
+
+</html>

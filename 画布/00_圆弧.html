@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        const canvas = document.createElement('canvas')
+        canvas.width = 400
+        canvas.height = 400
+        const ctx = canvas.getContext('2d')
+        document.body.append(canvas)
+
+        // 
+        ctx.beginPath()
+        ctx.arc(100, 100, 50, 0, Math.PI * 2)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.arc(100, 250, 50, 0, Math.PI / 2, true)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.arc(300, 100, 50, 0, Math.PI)
+        ctx.stroke()
+
+        ctx.beginPath()
+        ctx.arc(300, 250, 50, Math.PI, Math.PI / 1.5,true)  
+        ctx.stroke()
+
+
+    </script>
+</body>
+
+</html>

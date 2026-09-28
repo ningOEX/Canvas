@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            //
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+
+                const imageData = ctx.getImageData(0, 0, 400, 400)
+                // 每 4 个元素 = 1 个像素：[R, G, B, A]
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                    const r = imageData.data[i]
+                    const g = imageData.data[i + 1]
+                    const b = imageData.data[i + 2]
+                    const a = imageData.data[i + 3]
+
+                    // 变为灰度取平均值
+                    const avg = (r + g + b) / 3
+
+                    imageData.data[i] = avg
+                    imageData.data[i + 1] = avg
+                    imageData.data[i + 2] = avg
+                }
+                ctx.putImageData(imageData, 0, 0)
+
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            //
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+
+                const imageData = ctx.getImageData(0, 0, 400, 400)
+                // 每个像素值为4个
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                    const r = imageData.data[i]
+                    const g = imageData.data[i + 1]
+                    const b = imageData.data[i + 2]
+                    const a = imageData.data[i + 3]
+
+                    imageData.data[i] = 255 - r
+                    imageData.data[i + 1] = 255 - g
+                    imageData.data[i + 2] = 255 - b
+                }
+                ctx.putImageData(imageData, 0, 0)
+
+            }
+        })();
+        (() => {
+            const canvas = document.createElement('canvas')
+            canvas.width = 400
+            canvas.height = 400
+            const ctx = canvas.getContext('2d')
+            document.body.append(canvas)
+
+            //
+            const img = new Image()
+            img.src = "../images/02.jpeg"
+
+            img.onload = function () {
+                ctx.drawImage(img, 0, 0, 400, 220)
+
+                const imageData = ctx.getImageData(0, 0, 400, 400)
+                const data =imageData.data.length
+                // 每个像素值为4个
+                for (let i = 0; i < data; i += 4) {
+                    const r = imageData.data[i]
+                    const g = imageData.data[i + 1]
+                    const b = imageData.data[i + 2]
+                    const a = imageData.data[i + 3]
+
+                    if(r -g > 50){
+                        imageData.data[i] = b
+                        imageData.data[i + 1] = r
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0)
+
+            }
+        })();
+
+
+    </script>
+</body>
+
+</html>

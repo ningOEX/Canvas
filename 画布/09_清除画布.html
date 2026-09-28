@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>画布</title>
+  <style>
+    canvas {
+      border: 1px solid #ccc
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+
+      // 基准线
+      ctx.beginPath()
+      ctx.moveTo(50, 100)
+      ctx.lineTo(50, 200)
+      ctx.moveTo(300, 100)
+      ctx.lineTo(300, 200)
+      ctx.stroke()
+
+      // 虚线
+      ctx.beginPath()
+      ctx.lineWidth = 10
+      ctx.setLineDash([300]) // 设置虚线
+      ctx.lineDashOffset = 300 // 偏移量
+
+      function move() {
+        // 清除画布
+        ctx.clearRect(50, 145, 300, 10)
+
+        ctx.lineDashOffset -= 1 // 偏移量
+        ctx.moveTo(50, 150)
+        ctx.lineTo(300, 150)
+        ctx.stroke()
+
+        if (ctx.lineDashOffset === -300) {
+          ctx.lineDashOffset = 300 // 偏移量
+        }
+        requestAnimationFrame(move)
+      }
+      move()
+    })();
+
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+
+      ctx.beginPath()
+      ctx.setLineDash([5, 5])
+
+      function move() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.lineDashOffset += 1
+        ctx.rect(50, 100, 100, 100)
+        ctx.stroke()
+        requestAnimationFrame(move)
+      }
+      move()
+
+    })();
+
+    (() => {
+      // 创建画布
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 400
+      // 添加到页面
+      document.body.append(canvas)
+      // 获取画笔
+      const ctx = canvas.getContext('2d')
+
+      ctx.beginPath()
+      ctx.lineWidth = 10
+      ctx.strokeStyle = '#caf'
+      ctx.setLineDash([26])
+
+      function move() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        ctx.lineDashOffset += 1
+        ctx.roundRect(50, 10, 100, 100, 50)
+        ctx.stroke()
+
+        requestAnimationFrame(move)
+      }
+      move()
+
+    })();
+
+
+  </script>
+</body>
+
+</html>

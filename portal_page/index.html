@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>华夏文传 | 中国文化传媒门户 — 传承文脉 · 连接世界</title>
+  <meta name="description" content="华夏文传是面向全球的中国文化传媒品牌门户，聚合新闻、专题、视频、非遗、戏曲、书画、节气与城市文化，致力于中华优秀传统文化的数字化传承与国际传播。" />
+  <meta name="keywords" content="中国文化,文化传媒,非遗,戏曲,书画,节气,文化门户,国际传播" />
+  <meta name="author" content="华夏文传" />
+  <meta name="theme-color" content="#1a1410" />
+
+  <!-- 站点图标：红底「華」字印章 SVG -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="apple-touch-icon" href="favicon.svg" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="华夏文传 | 中国文化传媒门户" />
+  <meta property="og:description" content="传承文脉 · 连接世界 — 中国文化传媒的品牌门户与内容聚合窗口。" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:locale:alternate" content="en_US" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;600;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css?v=13" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "华夏文传",
+    "url": "https://www.huaxia-media.example",
+    "description": "面向全球的中国文化传媒品牌门户。",
+    "areaServed": "Worldwide",
+    "sameAs": []
+  }
+  </script>
+</head>
+<body>
+
+  <!-- ============ 顶部导航 ============ -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-inner">
+      <a class="brand" href="#hero" aria-label="华夏文传 首页">
+        <span class="brand-seal" aria-hidden="true">華</span>
+        <span class="brand-text">
+          <strong>华夏文传</strong>
+          <em>HUAXIA MEDIA</em>
+        </span>
+      </a>
+
+      <nav class="main-nav" aria-label="主导航">
+        <ul>
+          <li><a href="#mission" data-nav>文化使命</a></li>
+          <li><a href="#matrix" data-nav>内容矩阵</a></li>
+          <li><a href="#cases" data-nav>精品案例</a></li>
+          <li><a href="#impact" data-nav>数据影响</a></li>
+          <li><a href="#partners" data-nav>合作伙伴</a></li>
+          <li><a href="#contact" data-nav>加入联系</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="搜索" aria-expanded="false" aria-controls="searchPanel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+        <button class="icon-btn" id="langBtn" aria-label="切换语言">
+          <span data-i18n="lang">EN</span>
+        </button>
+        <button class="menu-btn" id="menuBtn" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileMenu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 搜索面板 -->
+    <div class="search-panel" id="searchPanel" hidden>
+      <form class="search-form" role="search">
+        <input type="search" id="searchInput" placeholder="搜索专题、非遗、视频、人物…" aria-label="站内搜索" />
+        <button type="submit" aria-label="提交搜索">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </button>
+      </form>
+      <div class="search-suggest" id="searchSuggest" aria-live="polite"></div>
+    </div>
+  </header>
+
+  <!-- 侧边滚动进度 / 锚点 -->
+  <nav class="side-dots" aria-label="页面锚点导航">
+    <ol id="sideDots"></ol>
+  </nav>
+
+  <!-- 减少动态提示（仅在用户开启时显示一次） -->
+
+  <!-- ============ 全屏滚动容器 ============ -->
+  <main class="scroller" id="scroller">
+
+    <!-- ===== 第一屏：品牌宣言 ===== -->
+    <section class="screen screen-hero is-active" id="hero" data-screen="0">
+      <div class="screen-bg hero-bg" aria-hidden="true">
+        <canvas class="hero-canvas" id="heroCanvas"></canvas>
+        <svg class="ink-wash ink-1" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <radialGradient id="inkG1" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="#000" stop-opacity="0.55"/>
+              <stop offset="60%" stop-color="#000" stop-opacity="0.18"/>
+              <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="300" cy="250" r="260" fill="url(#inkG1)"/>
+          <circle cx="900" cy="560" r="320" fill="url(#inkG1)" opacity="0.7"/>
+        </svg>
+        <div class="grain"></div>
+      </div>
+
+      <div class="hero-content">
+        <p class="hero-eyebrow reveal-line" data-reveal>传承文脉 · 连接世界</p>
+        <h1 class="hero-title">
+          <span class="line" data-reveal>让五千年文明</span>
+          <span class="line line-accent" data-reveal>遇见数字时代</span>
+        </h1>
+        <p class="hero-sub reveal-line" data-reveal>
+          华夏文传以「权威 · 文化厚度 · 国际视野 · 数字创新」为纲领，<br class="show-md"/>
+          打造中国文化传媒的品牌门户与全球内容窗口。
+        </p>
+        <div class="hero-cta reveal-line" data-reveal>
+          <a class="btn btn-primary" href="#mission">开启叙事</a>
+          <a class="btn btn-ghost" href="#cases">浏览精品</a>
+        </div>
+      </div>
+
+      <div class="seal hero-seal" aria-hidden="true">
+        <span>華夏<br/>文傳</span>
+      </div>
+
+      <div class="scroll-hint" aria-hidden="true">
+        <span>向下滚动</span>
+        <i></i>
+      </div>
+    </section>
+
+    <!-- ===== 第二屏：文化使命 ===== -->
+    <section class="screen screen-mission" id="mission" data-screen="1">
+      <div class="screen-bg mission-bg" aria-hidden="true">
+        <svg class="mountain" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMax slice">
+          <path d="M0,600 L0,420 L240,300 L420,400 L640,220 L860,360 L1080,260 L1440,400 L1440,600 Z" fill="#1d2a26" opacity="0.55"/>
+          <path d="M0,600 L0,500 L300,400 L520,470 L760,360 L980,450 L1440,380 L1440,600 Z" fill="#263a35" opacity="0.75"/>
+        </svg>
+      </div>
+
+      <div class="mission-wrap">
+        <div class="section-head reveal" data-reveal>
+          <span class="kicker">01 / 文化使命</span>
+          <h2>以文载道，以媒传薪</h2>
+        </div>
+        <div class="mission-grid">
+          <article class="mission-card reveal" data-reveal>
+            <i class="mc-icon">◈</i>
+            <h3>传承</h3>
+            <p>守护非遗、戏曲、书画与节气等文化根脉，建立可持续的内容档案与数字资产库。</p>
+          </article>
+          <article class="mission-card reveal" data-reveal style="--d:.12s">
+            <i class="mc-icon">❖</i>
+            <h3>创新</h3>
+            <p>运用沉浸叙事、动态水墨与互动展陈，让传统文化在数字空间焕发新生。</p>
+          </article>
+          <article class="mission-card reveal" data-reveal style="--d:.24s">
+            <i class="mc-icon">✦</i>
+            <h3>连接</h3>
+            <p>架设政府、媒体、文化机构与公众的桥梁，促成内容合作与国际传播。</p>
+          </article>
+          <article class="mission-card reveal" data-reveal style="--d:.36s">
+            <i class="mc-icon">❉</i>
+            <h3>致远</h3>
+            <p>以多语言与多终端触达全球受众，讲好可信、可爱、可敬的中国故事。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 第三屏：内容矩阵 ===== -->
+    <section class="screen screen-matrix" id="matrix" data-screen="2">
+      <div class="matrix-wrap">
+        <div class="section-head reveal" data-reveal>
+          <span class="kicker">02 / 内容矩阵</span>
+          <h2>一横一纵，贯通文化生态</h2>
+          <p class="lead">从新闻快讯到深度专题，从非遗档案到城市人文，构筑立体的中华文化内容版图。</p>
+        </div>
+
+        <div class="matrix-grid" id="matrixGrid">
+          <a class="m-card reveal" data-reveal href="#" style="--c:#c1272d">
+            <span class="m-num">01</span>
+            <h3>新闻资讯</h3>
+            <p>权威发布 · 文化政策 · 行业动态</p>
+          </a>
+          <a class="m-card reveal" data-reveal style="--c:#c9a961;--d:.08s" href="#">
+            <span class="m-num">02</span>
+            <h3>深度专题</h3>
+            <p>节气 · 节庆 · 主题策划</p>
+          </a>
+          <a class="m-card reveal" data-reveal style="--c:#2e5c5a;--d:.16s" href="#">
+            <span class="m-num">03</span>
+            <h3>非遗档案</h3>
+            <p>传承人 · 技艺 · 数字保护</p>
+          </a>
+          <a class="m-card reveal" data-reveal style="--c:#7a8f3f;--d:.24s" href="#">
+            <span class="m-num">04</span>
+            <h3>戏曲舞台</h3>
+            <p>京昆越豫 · 折子戏 · 名家</p>
+          </a>
+          <a class="m-card reveal" data-reveal style="--c:#b25a2a;--d:.32s" href="#">
+            <span class="m-num">05</span>
+            <h3>书画长廊</h3>
+            <p>馆藏 · 名家 · 美育课堂</p>
+          </a>
+          <a class="m-card reveal" data-reveal style="--c:#3f4d6b;--d:.40s" href="#">
+            <span class="m-num">06</span>
+            <h3>视频影像</h3>
+            <p>纪录片 · 访谈 · 城市宣传片</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 第四屏：精品案例 ===== -->
+    <section class="screen screen-cases" id="cases" data-screen="3">
+      <div class="cases-wrap">
+        <div class="section-head reveal" data-reveal>
+          <span class="kicker">03 / 精品案例</span>
+          <h2>看得见的文化影响力</h2>
+        </div>
+
+        <div class="case-showcase">
+          <button class="case-arrow prev" id="casePrev" aria-label="上一个案例">‹</button>
+          <div class="case-track" id="caseTrack">
+            <article class="case-item reveal" data-reveal data-case="0">
+              <div class="case-media" style="--bg:linear-gradient(135deg,#2e5c5a,#1d2a26)">
+                <span class="case-tag">专题</span>
+                <span class="case-play" aria-hidden="true">▶</span>
+              </div>
+              <div class="case-body">
+                <h3>《二十四节气·时光里的中国》</h3>
+                <p>以动态水墨与物候影像串联二十四节气，上线首月播放破亿，登上全球二十余个平台首页。</p>
+                <div class="case-meta"><span>纪录片 · 2025</span><span>传播 36 国</span></div>
+              </div>
+            </article>
+            <article class="case-item" data-case="1" hidden>
+              <div class="case-media" style="--bg:linear-gradient(135deg,#c1272d,#6e1418)">
+                <span class="case-tag">非遗</span>
+                <span class="case-play" aria-hidden="true">▶</span>
+              </div>
+              <div class="case-body">
+                <h3>《百匠千工·非遗数字化档案》</h3>
+                <p>联合百位非遗传承人，建立可检索、可交互的数字技艺档案，覆盖 12 大门类、320 项技艺。</p>
+                <div class="case-meta"><span>数字档案 · 2024</span><span>覆盖 320 项</span></div>
+              </div>
+            </article>
+            <article class="case-item" data-case="2" hidden>
+              <div class="case-media" style="--bg:linear-gradient(135deg,#c9a961,#8a6d2f)">
+                <span class="case-tag">城市</span>
+                <span class="case-play" aria-hidden="true">▶</span>
+              </div>
+              <div class="case-body">
+                <h3>《城脉·中国城市文化影像志》</h3>
+                <p>为 60 座城市打造人文影像名片，服务文旅推广与国际交流，成为城市外宣标配。</p>
+                <div class="case-meta"><span>影像志 · 2023</span><span>60 座城市</span></div>
+              </div>
+            </article>
+          </div>
+          <button class="case-arrow next" id="caseNext" aria-label="下一个案例">›</button>
+        </div>
+        <div class="case-dots" id="caseDots" role="tablist" aria-label="案例分页"></div>
+      </div>
+    </section>
+
+    <!-- ===== 第五屏：数据影响 ===== -->
+    <section class="screen screen-impact" id="impact" data-screen="4">
+      <div class="impact-wrap">
+        <div class="section-head reveal" data-reveal>
+          <span class="kicker">04 / 数据影响</span>
+          <h2>让传播，可被度量</h2>
+        </div>
+        <div class="impact-grid">
+          <div class="stat reveal" data-reveal>
+            <b class="num" data-count="8" data-suffix="亿+">0</b>
+            <span>累计触达人次</span>
+          </div>
+          <div class="stat reveal" data-reveal style="--d:.12s">
+            <b class="num" data-count="36" data-suffix=" 国">0</b>
+            <span>覆盖国家与地区</span>
+          </div>
+          <div class="stat reveal" data-reveal style="--d:.24s">
+            <b class="num" data-count="1200" data-suffix="+">0</b>
+            <span>原创内容作品</span>
+          </div>
+          <div class="stat reveal" data-reveal style="--d:.36s">
+            <b class="num" data-count="320" data-suffix=" 项">0</b>
+            <span>非遗数字化档案</span>
+          </div>
+        </div>
+        <p class="impact-note reveal" data-reveal style="--d:.48s">数据每季度更新 · 以真实传播价值度量文化影响力</p>
+      </div>
+    </section>
+
+    <!-- ===== 第六屏：合作伙伴 ===== -->
+    <section class="screen screen-partners" id="partners" data-screen="5">
+      <div class="partners-wrap">
+        <div class="section-head reveal" data-reveal>
+          <span class="kicker">05 / 合作伙伴</span>
+          <h2>与文化同行者并肩</h2>
+        </div>
+        <div class="partner-logos reveal" data-reveal>
+          <span>国家文博</span><span>央视频道</span><span>故宫文创</span>
+          <span>敦煌研究院</span><span>中国艺术研究院</span><span>国家图书馆</span>
+          <span>腾讯互娱</span><span>字节文化</span><span>新华文创</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 第七屏：加入联系 ===== -->
+    <section class="screen screen-contact" id="contact" data-screen="6">
+      <div class="contact-wrap">
+        <div class="contact-left reveal" data-reveal>
+          <span class="kicker">06 / 加入联系</span>
+          <h2>携手讲好<br/>中国故事</h2>
+          <p class="lead">无论您是政府机构、媒体同行、文化企业还是合作伙伴，我们都期待与您共建文化传播新生态。</p>
+          <ul class="contact-list">
+            <li><b>商务合作</b><span>partner@huaxia-media.example</span></li>
+            <li><b>内容投稿</b><span>editor@huaxia-media.example</span></li>
+            <li><b>媒体联络</b><span>press@huaxia-media.example</span></li>
+          </ul>
+        </div>
+
+        <form class="contact-form reveal" data-reveal style="--d:.2s" id="contactForm" novalidate>
+          <div class="field">
+            <label for="cf-name">您的称呼</label>
+            <input id="cf-name" name="name" type="text" placeholder="请输入姓名 / 机构" required />
+          </div>
+          <div class="field">
+            <label for="cf-email">联系方式</label>
+            <input id="cf-email" name="email" type="email" placeholder="邮箱或电话" required />
+          </div>
+          <div class="field">
+            <label for="cf-msg">合作意向</label>
+            <textarea id="cf-msg" name="msg" rows="3" placeholder="简述您的需求…"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">提交咨询</button>
+          <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <!-- ============ 页脚 ============ -->
+    <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="foot-brand">
+        <span class="brand-seal" aria-hidden="true">華</span>
+        <div>
+          <strong>华夏文传</strong>
+          <em>传承文脉 · 连接世界</em>
+        </div>
+      </div>
+      <nav class="foot-nav" aria-label="页脚导航">
+        <a href="#mission">文化使命</a>
+        <a href="#matrix">内容矩阵</a>
+        <a href="#cases">精品案例</a>
+        <a href="#contact">联系我们</a>
+      </nav>
+      <p class="foot-copy">© 2026 华夏文传 HUAXIA MEDIA · 京ICP备 0000000 号 · 保留所有权利</p>
+    </div>
+  </footer>
+  </main>
+
+  <!-- 回到顶部 -->
+  <button class="to-top" id="toTop" aria-label="回到顶部" hidden>↑</button>
+
+  <!-- 移动端菜单 -->
+  <div class="mobile-menu" id="mobileMenu" hidden>
+    <nav aria-label="移动端导航">
+      <a href="#mission">文化使命</a>
+      <a href="#matrix">内容矩阵</a>
+      <a href="#cases">精品案例</a>
+      <a href="#impact">数据影响</a>
+      <a href="#partners">合作伙伴</a>
+      <a href="#contact">加入联系</a>
+    </nav>
+  </div>
+
+  <script src="script.js?v=11" defer></script>
+</body>
+</html>
