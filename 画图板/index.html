@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画图板</title>
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div id="toolbar">
+        <ul>
+            <li><button class="shapeType active" data-type="line" id="lineBtn">线条 ────</button></li>
+            <li><button class="shapeType" data-type="rect" id="rectBtn">矩阵 ▭</button></li>
+            <li><button class="shapeType" data-type="circle" id="circleBtn">圆形 ◯</button></li>
+            <li><button class="shapeType" data-type="fill" id="fillBtn">填充 🧪</button></li>
+            <li><button class="shapeType" data-type="rubber" id="rubberBtn">橡皮檫 🧽</button></li>
+            <li id="drawType" class="none">
+                <div>
+                    <input type="radio" id="dewey" name="drone" value="stroke" checked />
+                    <label>边框</label>
+                </div>
+                <div>
+                    <input type="radio" id="louie" name="drone" value="fill" />
+                    <label>实心</label>
+                </div>
+            </li>
+            <li>
+                <select id="boldBtn">
+                    <option value="1">细 ────</option>
+                    <option value="2">中 ━━━━</option>
+                    <option value="4">粗 ━━━━</option>
+                    <option value="8">加粗 ▬▬▬▬</option>
+                </select>
+            </li>
+            <li><input id="colorBtn" type="color"></li>
+            <li><button id="clearBtn">清除画布</button></li>
+            <li><button id="saveBtn">保存画布</button></li>
+        </ul>
+    </div>
+
+    <div id="canvas-container"></div>
+    <script src="./index.js"></script>
+</body>
+
+</html>

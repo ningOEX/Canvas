@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>林深 LIN SHEN · 创意前端工程师 — 万花筒叙事简历</title>
+  <meta name="description" content="林深 / LIN SHEN — 创意前端工程师。一份以万花筒爆裂开场、碎片归位收尾的滚动叙事简历。动效、交互、性能、可访问性。" />
+  <meta name="author" content="林深 LIN SHEN" />
+  <meta name="theme-color" content="#05050a" />
+  <meta name="color-scheme" content="dark" />
+
+  <!-- 棱镜 favicon（内联 data URI，免额外文件） -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2305050a'/%3E%3Cpolygon points='32,6 56,50 8,50' fill='none' stroke='%2339e0ff' stroke-width='3'/%3E%3Cpolygon points='32,18 46,44 18,44' fill='none' stroke='%23ff3d7f' stroke-width='2.5'/%3E%3Ccircle cx='32' cy='34' r='3.5' fill='%23ffffff'/%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css?v=3" />
+</head>
+<body>
+
+  <a class="skip-link" href="#main">跳到正文（跳过开场动画）</a>
+
+  <!-- ============ 预加载：黑场 + 中心光点 + 环形刻度 ============ -->
+  <div class="preloader" id="preloader" aria-hidden="true">
+    <div class="pl-stage">
+      <div class="pl-ring" id="plRing">
+        <svg viewBox="0 0 200 200" class="pl-ticks" aria-hidden="true"></svg>
+      </div>
+      <div class="pl-core" id="plCore"></div>
+      <div class="pl-glow" id="plGlow"></div>
+      <div class="pl-label" id="plLabel">
+        <span class="pl-pct" id="plPct">0</span><span class="pl-unit">%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 背景层：深空 + 粒子 + 全局光晕 ============ -->
+  <div class="bg-layer" aria-hidden="true">
+    <canvas id="particleCanvas"></canvas>
+    <div class="bg-vignette"></div>
+    <div class="bg-grain"></div>
+  </div>
+
+  <!-- ============ 顶部导航（玻璃） ============ -->
+  <header class="nav-bar" id="navBar">
+    <a class="nav-logo" href="#hero" aria-label="回到顶部">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="20,3 36,31 4,31" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="20" cy="22" r="2.6" fill="currentColor"/></svg>
+      <span>LIN&nbsp;SHEN</span>
+    </a>
+    <nav class="nav-links" aria-label="章节导航">
+      <a href="#about">关于</a>
+      <a href="#skills">技能</a>
+      <a href="#projects">项目</a>
+      <a href="#experience">经历</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <button class="nav-reduce" id="reduceBtn" aria-label="切换减少动态模式" title="减少动态">◐</button>
+  </header>
+
+  <!-- 侧边章节锚点 -->
+  <nav class="side-dots" id="sideDots" aria-label="章节锚点"></nav>
+
+  <!-- ============ 主滚动容器 ============ -->
+  <main id="main">
+
+    <!-- ===== 第一幕：首屏 万花筒开场 ===== -->
+    <section class="act act-hero" id="hero" data-act="hero">
+      <div class="kaleido-stage" id="kaleidoStage" aria-hidden="true">
+        <div class="kaleido-wrap" id="kaleidoWrap">
+          <!-- 镜片碎片由 JS 注入 -->
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="hero-name" id="heroName" aria-label="林深 LIN SHEN">
+          <!-- 字符由 JS 拆分注入 -->
+        </h1>
+        <div class="hero-role-slot">
+          <div class="hero-slit" id="heroSlit"></div>
+          <p class="hero-role" id="heroRole">创意前端工程师 · Creative Frontend Engineer</p>
+        </div>
+        <p class="hero-tag" id="heroTag">用前端，把复杂体验做成直觉。</p>
+        <div class="hero-cta" id="heroCta">
+          <a class="btn btn-glow" href="#about">进入叙事</a>
+          <a class="btn btn-line" href="#contact">直接联系</a>
+        </div>
+      </div>
+
+      <div class="scroll-hint" aria-hidden="true"><span>SCROLL</span><i></i></div>
+    </section>
+
+    <!-- ===== 第二幕：关于 ===== -->
+    <section class="act act-about" id="about" data-act="about">
+      <div class="about-frame">
+        <div class="avatar-ring" id="avatarRing" aria-hidden="true">
+          <div class="avatar-core">林</div>
+        </div>
+        <div class="about-text">
+          <span class="kicker">01 / 关于</span>
+          <h2 class="split-lines" data-split>我在动效与工程之间，<br/>搭建一座可被直觉读懂的桥。</h2>
+          <p class="about-lead" data-reveal>六年创意前端经验，专注把 <b>GSAP 时间线</b>、<b>WebGL 粒子</b>与<b>语义化结构</b>编织成同一件事：让信息在滚动里自己讲出来。相信冲击力来自节奏、层次与转场，而不是单纯堆叠动画。</p>
+          <div class="about-keywords" data-reveal>
+            <span class="kw">动效叙事</span>
+            <span class="kw">交互工程</span>
+            <span class="kw">性能雕刻</span>
+            <span class="kw">可访问性</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 第三幕：技能 ===== -->
+    <section class="act act-skills" id="skills" data-act="skills">
+      <div class="skills-head">
+        <span class="kicker">02 / 技能</span>
+        <h2 class="split-lines" data-split>六边形矩阵：<br/>从一个中心点向外爆开。</h2>
+      </div>
+      <div class="skills-matrix" id="skillsMatrix">
+        <!-- 技能六边形由 JS 注入 -->
+      </div>
+    </section>
+
+    <!-- ===== 第四幕：项目（粘性堆叠 + 棱镜穿过） ===== -->
+    <section class="act act-projects" id="projects" data-act="projects">
+      <div class="projects-head">
+        <span class="kicker">03 / 项目</span>
+        <h2 class="split-lines" data-split>每一个项目，<br/>都是一次穿过棱镜的曝光。</h2>
+      </div>
+      <div class="projects-stack" id="projectsStack">
+        <article class="project-card" data-project="0" data-hue="190">
+          <div class="prism-media" aria-hidden="true"><div class="shard-grid"></div><span class="prism-tag">Motion</span></div>
+          <div class="project-body">
+            <h3 class="glitch" data-text="万花筒叙事简历">万花筒叙事简历</h3>
+            <p>以 GSAP 主时间线 + ScrollTrigger 导演的七幕滚动电影，首屏万花筒爆裂开场，碎片归位收尾。</p>
+            <ul class="project-meta"><li>GSAP</li><li>ScrollTrigger</li><li>Canvas</li><li>60fps</li></ul>
+          </div>
+        </article>
+        <article class="project-card" data-project="1" data-hue="320">
+          <div class="prism-media" aria-hidden="true"><div class="shard-grid"></div><span class="prism-tag">WebGL</span></div>
+          <div class="project-body">
+            <h3 class="glitch" data-text="棱镜数据可视化">棱镜数据可视化</h3>
+            <p>百万级数据点的实时渲染引擎，用着色器分簇 + 视锥剔除，把复杂关系压成一眼可读的光谱。</p>
+            <ul class="project-meta"><li>Three.js</li><li>GLSL</li><li>D3</li><li>实时</li></ul>
+          </div>
+        </article>
+        <article class="project-card" data-project="2" data-hue="25">
+          <div class="prism-media" aria-hidden="true"><div class="shard-grid"></div><span class="prism-tag">Brand</span></div>
+          <div class="project-body">
+            <h3 class="glitch" data-text="深空粒子品牌门户">深空粒子品牌门户</h3>
+            <p>为文化品牌打造的沉浸门户，粒子即身份、滚动即叙事，首屏 LCP 控制在 2.1s 内。</p>
+            <ul class="project-meta"><li>WebGL</li><li>GSAP</li><li>性能</li><li>LCP 2.1s</li></ul>
+          </div>
+        </article>
+        <article class="project-card" data-project="3" data-hue="150">
+          <div class="prism-media" aria-hidden="true"><div class="shard-grid"></div><span class="prism-tag">System</span></div>
+          <div class="project-body">
+            <h3 class="glitch" data-text="动效设计系统">动效设计系统</h3>
+            <p>一套可被设计与工程共用的动效令牌库：缓动、时长、路径一致，组件即时间线。</p>
+            <ul class="project-meta"><li>Design Token</li><li>React</li><li>Storybook</li><li>可访问</li></ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== 第五幕：经历（垂直时间线 + 光点沿路径） ===== -->
+    <section class="act act-exp" id="experience" data-act="experience">
+      <div class="exp-head">
+        <span class="kicker">04 / 经历</span>
+        <h2 class="split-lines" data-split>一束光，沿时间线<br/>走到今天。</h2>
+      </div>
+      <div class="timeline">
+        <svg class="exp-path" viewBox="0 0 100 600" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="pathGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#39e0ff"/>
+              <stop offset="50%" stop-color="#7b6dff"/>
+              <stop offset="100%" stop-color="#ff3d7f"/>
+            </linearGradient>
+          </defs>
+          <path id="expSvgPath" d="M50,10 C50,120 50,120 50,140 C50,160 50,180 50,200 C50,220 50,420 50,440 C50,460 50,480 50,500 C50,520 50,540 50,580" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
+          <path id="expSvgPathFill" d="M50,10 C50,120 50,120 50,140 C50,160 50,180 50,200 C50,220 50,420 50,440 C50,460 50,480 50,500 C50,520 50,540 50,580" fill="none" stroke="url(#pathGrad)" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <div class="exp-dot" id="expDot" aria-hidden="true"></div>
+
+        <article class="exp-node" data-node="0">
+          <span class="exp-year">2024 — 至今</span>
+          <h3>高级前端工程师 · 数字创意工作室</h3>
+          <ul><li>主导 12 个品牌叙事站点，平均首屏加载下降 38%</li><li>建立动效设计系统，团队交付效率提升 2.4 倍</li></ul>
+        </article>
+        <article class="exp-node" data-node="1">
+          <span class="exp-year">2022 — 2024</span>
+          <h3>前端工程师 · 互联网产品团队</h3>
+          <ul><li>重构核心数据看板，交互帧率从 34fps 稳定到 60fps</li><li>落地可访问性基线，WCAG AA 全量通过</li></ul>
+        </article>
+        <article class="exp-node" data-node="2">
+          <span class="exp-year">2020 — 2022</span>
+          <h3>前端开发 · 科技公司</h3>
+          <ul><li>从 0 搭建组件库与工程化脚手架</li><li>首次把 WebGL 引入营销页，转化率 +27%</li></ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- ===== 第六幕：联系（碎片回收 → 中心光点 → 爆发成入口） ===== -->
+    <section class="act act-contact" id="contact" data-act="contact">
+      <div class="contact-recollect" id="contactRecollect" aria-hidden="true"></div>
+      <div class="contact-wrap">
+        <span class="kicker">05 / 联系</span>
+        <h2 class="split-lines" data-split>碎片归位，<br/>留下一个会发光的入口。</h2>
+        <p class="contact-lead" data-reveal>无论是一个想法、一次合作，还是一段想被讲好的故事 —— 都欢迎。</p>
+        <div class="contact-grid" data-reveal>
+          <a class="contact-card cc-email" href="mailto:hello@linshen.studio">
+            <span class="cc-label">Email</span>
+            <b>hello@linshen.studio</b>
+          </a>
+          <a class="contact-card cc-git" href="#" aria-label="GitHub">
+            <span class="cc-label">GitHub</span>
+            <b>@linshen</b>
+          </a>
+          <a class="contact-card cc-social" href="#" aria-label="社交主页">
+            <span class="cc-label">Social</span>
+            <b>linshen.studio</b>
+          </a>
+          <div class="contact-card cc-qr" role="img" aria-label="扫码添加联系方式">
+            <span class="cc-label">扫码</span>
+            <div class="qr-box"><div class="qr-inner"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 第七幕：页脚 ===== -->
+    <footer class="site-footer" id="footer">
+      <div class="footer-inner">
+        <div class="foot-brand">
+          <svg viewBox="0 0 40 40" aria-hidden="true"><polygon points="20,3 36,31 4,31" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="20" cy="22" r="2.6" fill="currentColor"/></svg>
+          <div><strong>林深 LIN SHEN</strong><em>用前端，把复杂体验做成直觉。</em></div>
+        </div>
+        <p class="foot-copy">© 2026 LIN SHEN · Crafted with GSAP &amp; ScrollTrigger · 保留所有权利</p>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="script.js?v=3" defer></script>
+</body>
+</html>

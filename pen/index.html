@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>华腾智慧笔 — 纸笔不改，数据自来</title>
+<meta name="description" content="华腾智慧笔依托点阵码与智能手写笔，在不改变师生纸质书写习惯的前提下，动态采集批改过程数据，即时生成专属错题本与学情分析。">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* ============ 设计令牌 / Design Tokens ============ */
+:root{
+  --blue:#188FFF;
+  --blue-rgb:24,143,255;
+  --lime:#BEDC0E;
+  --lime-rgb:190,220,14;
+  --gold:#FFC100;
+  --gold-rgb:255,193,0;
+  --ink:#050810;
+  --ink-2:#0A0F1C;
+  --ink-3:#0F1626;
+  --ink-4:#16203A;
+  --glass:rgba(255,255,255,.04);
+  --glass-border:rgba(255,255,255,.08);
+  --text:#E8ECF4;
+  --text-dim:#8A94A8;
+  --text-faint:#4A5468;
+  --font:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--ink);
+  color:var(--text);
+  overflow-x:hidden;
+  line-height:1.6;
+}
+body.no-scroll{overflow:hidden;height:100vh}
+
+::selection{background:rgba(var(--blue-rgb),.4);color:#fff}
+
+/* ============ 预加载 / Preloader ============ */
+#preloader{
+  position:fixed;inset:0;z-index:9999;
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity .8s ease,visibility .8s ease;
+}
+#preloader.done{opacity:0;visibility:hidden;pointer-events:none}
+#preloader canvas{position:absolute;inset:0;width:100%;height:100%}
+.preloader-brand{
+  position:relative;z-index:2;
+  text-align:center;
+  opacity:0;
+  transform:scale(.8);
+  transition:opacity .6s ease,transform .6s cubic-bezier(.22,1.2,.36,1);
+}
+.preloader-brand.show{opacity:1;transform:scale(1)}
+.preloader-logo{
+  width:64px;height:64px;margin:0 auto 16px;
+  background:#c1272d;
+  display:flex;align-items:center;justify-content:center;
+  font-size:38px;font-weight:700;color:#fff;
+  border-radius:4px;
+  letter-spacing:0;
+}
+.preloader-tag{
+  font-size:13px;color:var(--text-dim);
+  letter-spacing:8px;padding-left:8px;
+  text-transform:uppercase;
+}
+
+/* ============ 点阵网格背景 ============ */
+.dot-grid{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.06) 1px,transparent 1px);
+  background-size:32px 32px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%,black 30%,transparent 100%);
+  opacity:.4;
+}
+
+/* ============ 导航 / Nav ============ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:72px;
+  backdrop-filter:blur(20px);
+  background:rgba(5,8,16,.6);
+  border-bottom:1px solid var(--glass-border);
+  transition:background .3s;
+}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text)}
+.nav-logo-box{
+  width:36px;height:36px;background:#c1272d;border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;font-weight:700;color:#fff;
+}
+.nav-logo-text{font-size:17px;font-weight:600;letter-spacing:1px}
+.nav-links{display:flex;gap:8px;list-style:none}
+.nav-links a{
+  color:var(--text-dim);text-decoration:none;font-size:14px;
+  padding:8px 14px;border-radius:8px;transition:all .3s;
+}
+.nav-links a:hover{color:var(--text);background:var(--glass)}
+.nav-links a.active{color:var(--blue)}
+.nav-cta{
+  background:var(--blue);color:#fff;border:none;
+  padding:10px 24px;border-radius:8px;font-size:14px;
+  cursor:pointer;font-weight:500;transition:all .3s;
+  font-family:var(--font);
+}
+.nav-cta:hover{background:#0a78e0;box-shadow:0 0 24px rgba(var(--blue-rgb),.4)}
+
+.mobile-menu-btn{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:8px}
+.mobile-menu-btn span{width:22px;height:2px;background:var(--text);border-radius:2px;transition:.3s}
+
+/* ============ 通用 section ============ */
+section{position:relative;z-index:1;padding:120px 48px}
+.section-num{
+  font-size:12px;color:var(--blue);letter-spacing:4px;
+  font-weight:600;margin-bottom:16px;
+  display:flex;align-items:center;gap:12px;
+}
+.section-num::before{content:'';width:32px;height:1px;background:var(--blue)}
+.section-title{font-size:clamp(32px,4vw,48px);font-weight:700;margin-bottom:16px;line-height:1.2}
+.section-title .hl-blue{color:var(--blue)}
+.section-title .hl-lime{color:var(--lime)}
+.section-title .hl-gold{color:var(--gold)}
+.section-sub{color:var(--text-dim);font-size:16px;max-width:680px}
+
+/* ============ Hero ============ */
+#hero{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:120px 48px 80px;position:relative;overflow:hidden;
+}
+.hero-grid-bg{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(var(--blue-rgb),.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(var(--blue-rgb),.04) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,black 10%,transparent 80%);
+}
+.hero-content{
+  position:relative;z-index:2;
+  display:grid;grid-template-columns:1.1fr 1fr;gap:60px;
+  align-items:center;max-width:1280px;width:100%;
+}
+.hero-left{opacity:0;transform:translateY(40px);animation:fadeUp 1s .6s forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:6px 16px;border-radius:100px;
+  background:rgba(var(--blue-rgb),.1);border:1px solid rgba(var(--blue-rgb),.3);
+  color:var(--blue);font-size:12px;font-weight:500;margin-bottom:28px;
+}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.hero-h1{
+  font-size:clamp(40px,5.5vw,72px);font-weight:800;line-height:1.15;
+  letter-spacing:-1px;margin-bottom:24px;
+}
+.hero-h1 .stroke-blue{
+  background:linear-gradient(135deg,var(--blue),#5eb3ff);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero-h1 .stroke-gold{color:var(--gold)}
+.hero-desc{
+  font-size:17px;color:var(--text-dim);line-height:1.8;
+  max-width:520px;margin-bottom:36px;
+}
+.hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+.btn-primary{
+  background:var(--blue);color:#fff;border:none;
+  padding:16px 36px;border-radius:12px;font-size:15px;font-weight:600;
+  cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font);
+}
+.btn-primary:hover{background:#0a78e0;box-shadow:0 0 40px rgba(var(--blue-rgb),.5);transform:translateY(-2px)}
+.btn-ghost{
+  background:transparent;color:var(--text);
+  border:1px solid var(--glass-border);
+  padding:16px 36px;border-radius:12px;font-size:15px;font-weight:600;
+  cursor:pointer;transition:all .3s;display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font);
+}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);box-shadow:0 0 24px rgba(var(--gold-rgb),.2)}
+
+/* Hero right — visual fusion */
+.hero-visual{
+  position:relative;height:480px;
+  opacity:0;transform:translateX(40px);
+  animation:fadeRight 1s .9s forwards;
+}
+@keyframes fadeRight{to{opacity:1;transform:translateX(0)}}
+.hero-canvas{position:absolute;inset:0;width:100%;height:100%}
+.hero-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--blue-rgb),.15),transparent 70%);
+  pointer-events:none;
+}
+
+/* ============ 痛点 / Pain Points ============ */
+#pain{background:linear-gradient(180deg,var(--ink) 0%,var(--ink-2) 100%)}
+.pain-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  margin-top:56px;max-width:1280px;
+}
+.pain-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;padding:32px 28px;position:relative;overflow:hidden;
+  transition:all .4s;
+}
+.pain-card:hover{transform:translateY(-6px);border-color:rgba(var(--blue-rgb),.3)}
+.pain-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--card-bar,var(--blue));
+}
+.pain-card[data-color="blue"]{--card-bar:var(--blue)}
+.pain-card[data-color="lime"]{--card-bar:var(--lime)}
+.pain-card[data-color="gold"]{--card-bar:var(--gold)}
+.pain-card[data-color="gray"]{--card-bar:var(--text-faint)}
+.pain-icon{
+  width:44px;height:44px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:20px;
+  background:rgba(var(--card-bar-rgb),.1);
+}
+.pain-card[data-color="blue"] .pain-icon{background:rgba(var(--blue-rgb),.1)}
+.pain-card[data-color="lime"] .pain-icon{background:rgba(var(--lime-rgb),.1)}
+.pain-card[data-color="gold"] .pain-icon{background:rgba(var(--gold-rgb),.1)}
+.pain-card[data-color="gray"] .pain-icon{background:rgba(255,255,255,.05)}
+.pain-num{
+  font-size:42px;font-weight:800;margin-bottom:8px;
+  color:var(--card-bar,var(--blue));
+  font-variant-numeric:tabular-nums;
+}
+.pain-card[data-color="blue"] .pain-num{color:var(--blue)}
+.pain-card[data-color="lime"] .pain-num{color:var(--lime)}
+.pain-card[data-color="gold"] .pain-num{color:var(--gold)}
+.pain-card[data-color="gray"] .pain-num{color:var(--text)}
+.pain-title{font-size:16px;font-weight:600;margin-bottom:10px}
+.pain-desc{font-size:13px;color:var(--text-dim);line-height:1.7}
+.pain-line{
+  margin-top:16px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,var(--card-bar,var(--blue)) 0%,transparent 100%);
+  position:relative;overflow:hidden;
+}
+.pain-card[data-color="blue"] .pain-line{background:linear-gradient(90deg,var(--blue),transparent)}
+.pain-card[data-color="lime"] .pain-line{background:linear-gradient(90deg,var(--lime),transparent)}
+.pain-card[data-color="gold"] .pain-line{background:linear-gradient(90deg,var(--gold),transparent)}
+.pain-card[data-color="gray"] .pain-line{background:linear-gradient(90deg,var(--text-faint),transparent)}
+.pain-line::after{
+  content:'';position:absolute;inset:0;
+  background:inherit;
+  animation:lineGrow 2s ease-in-out infinite;
+}
+@keyframes lineGrow{
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
+}
+.pain-quote{
+  margin-top:48px;text-align:center;font-size:20px;font-weight:600;
+  color:var(--text);letter-spacing:1px;
+}
+.pain-quote span{color:var(--gold)}
+
+/* ============ 原理 / Principles ============ */
+#principles{background:var(--ink-2)}
+.principles-flow{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  margin-top:60px;max-width:1200px;position:relative;
+}
+.principle-node{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:20px;padding:40px 32px;text-align:center;
+  position:relative;transition:all .4s;
+}
+.principle-node:hover{transform:translateY(-8px)}
+.principle-node[data-color="blue"]{border-color:rgba(var(--blue-rgb),.25)}
+.principle-node[data-color="lime"]{border-color:rgba(var(--lime-rgb),.25)}
+.principle-node[data-color="gold"]{border-color:rgba(var(--gold-rgb),.25)}
+.principle-icon{
+  width:72px;height:72px;margin:0 auto 24px;border-radius:20px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:34px;position:relative;
+}
+.principle-node[data-color="blue"] .principle-icon{
+  background:rgba(var(--blue-rgb),.12);box-shadow:0 0 40px rgba(var(--blue-rgb),.2);
+}
+.principle-node[data-color="lime"] .principle-icon{
+  background:rgba(var(--lime-rgb),.12);box-shadow:0 0 40px rgba(var(--lime-rgb),.2);
+}
+.principle-node[data-color="gold"] .principle-icon{
+  background:rgba(var(--gold-rgb),.12);box-shadow:0 0 40px rgba(var(--gold-rgb),.2);
+}
+.principle-step{font-size:11px;letter-spacing:3px;color:var(--text-faint);margin-bottom:8px}
+.principle-title{font-size:20px;font-weight:700;margin-bottom:14px}
+.principle-node[data-color="blue"] .principle-title{color:var(--blue)}
+.principle-node[data-color="lime"] .principle-title{color:var(--lime)}
+.principle-node[data-color="gold"] .principle-title{color:var(--gold)}
+.principle-desc{font-size:13px;color:var(--text-dim);line-height:1.8}
+.principle-link{
+  position:absolute;top:50%;width:60px;height:2px;z-index:1;
+}
+.principle-link.l1{left:calc(33.33% - 12px);background:linear-gradient(90deg,var(--blue),var(--lime))}
+.principle-link.l2{left:calc(66.66% - 12px);background:linear-gradient(90deg,var(--lime),var(--gold))}
+.principle-quote{
+  margin-top:48px;text-align:center;
+  font-size:18px;color:var(--text);font-weight:500;
+  padding:24px;background:var(--glass);border-radius:16px;
+  border:1px solid var(--glass-border);max-width:800px;margin-left:auto;margin-right:auto;
+}
+.principle-quote .b{color:var(--blue)}
+.principle-quote .l{color:var(--lime)}
+.principle-quote .g{color:var(--gold)}
+
+/* ============ 教师场景 / Teacher Scene ============ */
+#teacher{background:linear-gradient(180deg,var(--ink-2) 0%,var(--ink) 100%)}
+.teacher-wrap{
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;
+  align-items:center;margin-top:56px;max-width:1280px;
+}
+.teacher-visual{
+  position:relative;height:420px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:20px;overflow:hidden;
+}
+.teacher-canvas{position:absolute;inset:0;width:100%;height:100%}
+.teacher-tag{
+  position:absolute;top:20px;left:20px;z-index:3;
+  display:flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:100px;
+  background:rgba(var(--blue-rgb),.15);border:1px solid rgba(var(--blue-rgb),.4);
+  font-size:13px;color:var(--blue);font-weight:500;
+}
+.teacher-tag::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--blue);animation:pulse 1.5s infinite}
+.teacher-data-panel{
+  position:absolute;bottom:20px;right:20px;z-index:3;
+  background:rgba(5,8,16,.85);backdrop-filter:blur(12px);
+  border:1px solid var(--glass-border);border-radius:12px;
+  padding:16px 20px;min-width:200px;
+}
+.teacher-data-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:8px}
+.teacher-data-row:last-child{margin-bottom:0}
+.teacher-data-row .label{color:var(--text-dim)}
+.teacher-data-row .val{color:var(--blue);font-weight:600}
+.teacher-info h3{font-size:24px;font-weight:700;margin-bottom:16px}
+.teacher-info p{color:var(--text-dim);font-size:15px;line-height:1.8;margin-bottom:20px}
+.teacher-feats{list-style:none;display:grid;gap:14px}
+.teacher-feats li{
+  display:flex;gap:12px;align-items:flex-start;font-size:14px;color:var(--text-dim);
+}
+.teacher-feats li::before{
+  content:'✓';flex-shrink:0;width:22px;height:22px;border-radius:6px;
+  background:rgba(var(--blue-rgb),.15);color:var(--blue);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+}
+.teacher-bigquote{
+  margin-top:32px;font-size:22px;font-weight:700;color:var(--blue);
+  border-left:3px solid var(--blue);padding-left:20px;
+}
+
+/* ============ 错题本 / Error Book ============ */
+#errorbook{background:var(--ink)}
+.errorbook-wrap{
+  display:grid;grid-template-columns:1fr 1.2fr;gap:60px;
+  align-items:center;margin-top:56px;max-width:1280px;
+}
+.errorbook-info h3{font-size:24px;font-weight:700;margin-bottom:16px}
+.errorbook-info p{color:var(--text-dim);font-size:15px;line-height:1.8;margin-bottom:24px}
+.errorbook-tags{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.err-tag{
+  padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500;
+  border:1px solid rgba(var(--lime-rgb),.35);color:var(--lime);
+  background:rgba(var(--lime-rgb),.08);
+}
+.errorbook-path{
+  display:flex;flex-direction:column;gap:0;
+}
+.path-node{
+  display:flex;align-items:center;gap:16px;padding:14px 20px;
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:12px;position:relative;
+  opacity:0;transform:translateX(-20px);transition:all .5s;
+}
+.path-node.show{opacity:1;transform:translateX(0)}
+.path-node + .path-node{margin-top:12px}
+.path-node .pdot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+  background:var(--lime);box-shadow:0 0 12px rgba(var(--lime-rgb),.6);
+}
+.path-node .plabel{font-size:14px;color:var(--text)}
+.path-node .pmeta{font-size:11px;color:var(--text-faint);margin-left:auto}
+.path-node.master .pdot{background:var(--blue);box-shadow:0 0 12px rgba(var(--blue-rgb),.6)}
+.path-node.master .pmeta{color:var(--lime)}
+.errorbook-quote{
+  margin-top:32px;font-size:20px;font-weight:700;
+  background:linear-gradient(135deg,var(--lime),var(--blue));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.errorbook-quote-sub{font-size:14px;color:var(--text-dim);margin-top:8px}
+
+/* ============ 驾驶舱 / Dashboard ============ */
+#dashboard{background:linear-gradient(180deg,var(--ink) 0%,var(--ink-2) 100%)}
+.dash-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  margin-top:48px;max-width:1280px;
+}
+.dash-stat{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;padding:28px 24px;text-align:center;
+  transition:all .4s;
+}
+.dash-stat:hover{transform:translateY(-4px);border-color:rgba(var(--gold-rgb),.3)}
+.dash-stat-num{
+  font-size:36px;font-weight:800;margin-bottom:6px;
+  font-variant-numeric:tabular-nums;
+}
+.dash-stat[data-c="blue"] .dash-stat-num{color:var(--blue)}
+.dash-stat[data-c="lime"] .dash-stat-num{color:var(--lime)}
+.dash-stat[data-c="gold"] .dash-stat-num{color:var(--gold)}
+.dash-stat-label{font-size:13px;color:var(--text-dim)}
+.dash-charts{
+  display:grid;grid-template-columns:1.4fr 1fr;gap:20px;
+  margin-top:20px;max-width:1280px;
+}
+.dash-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;padding:28px;
+}
+.dash-card-title{font-size:15px;font-weight:600;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.dash-card-title::before{content:'';width:3px;height:14px;border-radius:2px;background:var(--blue)}
+.chart-wrap{position:relative;height:260px}
+.dash-quote{
+  margin-top:32px;text-align:center;font-size:20px;font-weight:700;
+  color:var(--gold);
+}
+
+/* ============ 价值证明 / Value ============ */
+#value{background:var(--ink-2)}
+.value-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  margin-top:48px;max-width:1280px;
+}
+.value-stat{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;padding:32px 24px;text-align:center;
+}
+.value-stat-num{font-size:44px;font-weight:800;margin-bottom:8px;color:var(--gold)}
+.value-stat-label{font-size:13px;color:var(--text-dim)}
+.value-compare{
+  display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;max-width:1280px;
+}
+.compare-card{
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:16px;padding:32px;
+}
+.compare-card h4{font-size:16px;margin-bottom:24px;display:flex;align-items:center;gap:8px}
+.compare-card.before h4::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--text-faint)}
+.compare-card.after h4::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--lime)}
+.compare-row{margin-bottom:18px}
+.compare-row:last-child{margin-bottom:0}
+.compare-row-label{font-size:13px;color:var(--text-dim);margin-bottom:8px;display:flex;justify-content:space-between}
+.compare-bar{height:8px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden}
+.compare-bar-fill{height:100%;border-radius:4px;transition:width 1.5s ease}
+.compare-card.before .compare-bar-fill{background:var(--text-faint)}
+.compare-card.after .compare-bar-fill{background:linear-gradient(90deg,var(--blue),var(--lime),var(--gold))}
+
+/* ============ CTA ============ */
+#cta{
+  background:linear-gradient(180deg,var(--ink-2) 0%,var(--ink) 100%);
+  padding-bottom:160px;
+}
+.cta-wrap{
+  max-width:640px;margin:56px auto 0;text-align:center;
+  background:var(--glass);border:1px solid var(--glass-border);
+  border-radius:24px;padding:56px 48px;position:relative;overflow:hidden;
+}
+.cta-wrap::before{
+  content:'';position:absolute;top:-50%;left:50%;transform:translateX(-50%);
+  width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--gold-rgb),.08),transparent 70%);
+  pointer-events:none;
+}
+.cta-title{font-size:32px;font-weight:800;margin-bottom:16px}
+.cta-title .g{color:var(--gold)}
+.cta-desc{color:var(--text-dim);font-size:15px;margin-bottom:36px}
+.cta-progress{
+  display:flex;gap:4px;margin-bottom:32px;justify-content:center;
+}
+.cta-prog-seg{
+  flex:1;max-width:80px;height:4px;border-radius:2px;
+  background:rgba(255,255,255,.08);transition:background .4s;
+}
+.cta-prog-seg.active.b1{background:var(--blue)}
+.cta-prog-seg.active.b2{background:var(--lime)}
+.cta-prog-seg.active.b3{background:var(--gold)}
+.cta-form{text-align:left}
+.cta-step{display:none}
+.cta-step.active{display:block;animation:fadeUp .4s ease}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:8px}
+.form-group input,.form-group select{
+  width:100%;padding:14px 16px;border-radius:10px;
+  background:rgba(255,255,255,.04);border:1px solid var(--glass-border);
+  color:var(--text);font-size:14px;font-family:var(--font);
+  outline:none;transition:border .3s;
+}
+.form-group input:focus,.form-group select:focus{border-color:var(--blue)}
+.form-group select option{background:var(--ink-3)}
+.cta-form-actions{display:flex;gap:12px;margin-top:24px}
+.cta-form-actions button{flex:1}
+.btn-next{
+  background:var(--blue);color:#fff;border:none;padding:14px;border-radius:10px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);transition:all .3s;
+}
+.btn-next:hover{background:#0a78e0}
+.btn-prev{
+  background:transparent;color:var(--text-dim);border:1px solid var(--glass-border);
+  padding:14px;border-radius:10px;font-size:14px;cursor:pointer;font-family:var(--font);transition:all .3s;
+}
+.btn-prev:hover{color:var(--text);border-color:var(--text-dim)}
+.cta-success{
+  display:none;text-align:center;padding:40px 0;
+}
+.cta-success.show{display:block;animation:fadeUp .5s ease}
+.cta-success-icon{
+  width:64px;height:64px;margin:0 auto 20px;border-radius:50%;
+  background:rgba(var(--lime-rgb),.15);border:1px solid rgba(var(--lime-rgb),.4);
+  display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--lime);
+}
+.cta-success h3{font-size:20px;margin-bottom:8px}
+.cta-success p{color:var(--text-dim);font-size:14px}
+
+/* ============ Footer ============ */
+footer{
+  background:var(--ink);border-top:1px solid var(--glass-border);
+  padding:48px;text-align:center;position:relative;z-index:1;
+}
+.footer-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:16px}
+.footer-text{color:var(--text-faint);font-size:13px}
+
+/* ============ 滚动进度条 ============ */
+.scroll-progress{
+  position:fixed;top:0;left:0;height:3px;z-index:1001;
+  background:linear-gradient(90deg,var(--blue),var(--lime),var(--gold));
+  width:0;transition:width .1s;
+}
+
+/* ============ 鼠标跟随光晕 ============ */
+.mouse-glow{
+  position:fixed;width:400px;height:400px;border-radius:50%;
+  background:radial-gradient(circle,rgba(var(--blue-rgb),.06),transparent 70%);
+  pointer-events:none;z-index:0;
+  transform:translate(-50%,-50%);transition:transform .15s ease-out;
+  mix-blend-mode:screen;
+}
+
+/* ============ 响应式 ============ */
+@media(max-width:1024px){
+  .hero-content,.teacher-wrap,.errorbook-wrap{grid-template-columns:1fr;gap:40px}
+  .pain-grid,.value-stats,.dash-stats{grid-template-columns:repeat(2,1fr)}
+  .principles-flow{grid-template-columns:1fr;gap:40px}
+  .principle-link{display:none}
+  .dash-charts{grid-template-columns:1fr}
+  .value-compare{grid-template-columns:1fr}
+  section{padding:80px 24px}
+  nav{padding:0 24px}
+  .nav-links{display:none}
+  .mobile-menu-btn{display:flex}
+  .nav-links.open{
+    display:flex;position:absolute;top:72px;left:0;right:0;
+    flex-direction:column;background:rgba(5,8,16,.95);
+    backdrop-filter:blur(20px);padding:20px;gap:4px;
+    border-bottom:1px solid var(--glass-border);
+  }
+}
+@media(max-width:640px){
+  .pain-grid,.value-stats,.dash-stats{grid-template-columns:1fr}
+  .hero-visual{height:320px}
+  .cta-wrap{padding:36px 24px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body class="no-scroll">
+
+<!-- 预加载 -->
+<div id="preloader">
+  <canvas id="preCanvas"></canvas>
+  <div class="preloader-brand" id="preBrand">
+    <div class="preloader-logo">華</div>
+    <div class="preloader-tag">HUATENG SMART PEN</div>
+  </div>
+</div>
+
+<!-- 滚动进度 -->
+<div class="scroll-progress" id="scrollProg"></div>
+
+<!-- 鼠标光晕 -->
+<div class="mouse-glow" id="mouseGlow"></div>
+
+<!-- 点阵网格 -->
+<div class="dot-grid"></div>
+
+<!-- 导航 -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <div class="nav-logo-box">華</div>
+    <span class="nav-logo-text">华腾智慧笔</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#hero" class="active">首页</a></li>
+    <li><a href="#pain">痛点</a></li>
+    <li><a href="#principles">产品原理</a></li>
+    <li><a href="#teacher">应用场景</a></li>
+    <li><a href="#errorbook">错题本</a></li>
+    <li><a href="#dashboard">学情驾驶舱</a></li>
+    <li><a href="#value">案例</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">预约演示</button>
+  <button class="mobile-menu-btn" id="menuBtn"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- Hero -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge"><span class="dot"></span>智慧教育 · 纸笔智联 · 数据引擎</div>
+      <h1 class="hero-h1">
+        纸笔不改<br>
+        <span class="stroke-blue">数据自来</span>
+      </h1>
+      <p class="hero-desc">
+        华腾智慧笔依托点阵码与智能手写笔，在不改变师生纸质书写习惯的前提下，动态采集批改过程数据，即时生成专属错题本、学情统计与分析。
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">预约演示 →</button>
+        <button class="btn-ghost" onclick="document.getElementById('dashboard').scrollIntoView({behavior:'smooth'})">进入学情数据驾驶舱</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-glow"></div>
+      <canvas id="heroCanvas" class="hero-canvas"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- 痛点 -->
+<section id="pain">
+  <div class="section-num">STEP 02 — 痛点共鸣</div>
+  <h2 class="section-title">传统教育的<span class="hl-blue">数据断裂</span></h2>
+  <p class="section-sub">批改不是终点，数据才是起点。当纸笔无法产生数据，教与学都在黑暗中摸索。</p>
+  <div class="pain-grid">
+    <div class="pain-card" data-color="blue">
+      <div class="pain-icon">⏱</div>
+      <div class="pain-num" data-target="3">0</div>
+      <div class="pain-title">教师批改耗时</div>
+      <div class="pain-desc">每班次平均批改耗时超 3 小时，重复性劳动挤占备课与教研时间。</div>
+      <div class="pain-line"></div>
+    </div>
+    <div class="pain-card" data-color="lime">
+      <div class="pain-icon">📋</div>
+      <div class="pain-num" data-target="85">0</div>
+      <div class="pain-title">错题难以沉淀</div>
+      <div class="pain-desc">约 85% 的错题无法被系统归集，学生错过举一反三的关键机会。</div>
+      <div class="pain-line"></div>
+    </div>
+    <div class="pain-card" data-color="gold">
+      <div class="pain-icon">📊</div>
+      <div class="pain-num" data-target="7">0</div>
+      <div class="pain-title">学情反馈滞后</div>
+      <div class="pain-desc">从批改到学情分析平均滞后 7 天，教学调整错过最佳窗口期。</div>
+      <div class="pain-line"></div>
+    </div>
+    <div class="pain-card" data-color="gray">
+      <div class="pain-icon">🎯</div>
+      <div class="pain-num" data-target="60">0</div>
+      <div class="pain-title">决策依赖经验</div>
+      <div class="pain-desc">超过 60% 的教学管理决策依赖经验判断，缺乏即时数据支撑。</div>
+      <div class="pain-line"></div>
+    </div>
+  </div>
+  <div class="pain-quote">批改不是终点，<span>数据才是起点</span>。</div>
+</section>
+
+<!-- 原理 -->
+<section id="principles">
+  <div class="section-num">STEP 03 — 产品原理</div>
+  <h2 class="section-title">三节点工作流，<span class="hl-lime">让纸笔接入数据世界</span></h2>
+  <p class="section-sub">不改变纸笔习惯，不增加师生负担，让每一次批改都成为学情数据。</p>
+  <div class="principles-flow">
+    <div class="principle-link l1"></div>
+    <div class="principle-link l2"></div>
+    <div class="principle-node" data-color="blue">
+      <div class="principle-icon">📄</div>
+      <div class="principle-step">NODE 01</div>
+      <div class="principle-title">点阵码纸面</div>
+      <div class="principle-desc">普通纸张印制隐形点阵码，肉眼不可见但设备可精准识别。书写即定位，落笔即采集。</div>
+    </div>
+    <div class="principle-node" data-color="lime">
+      <div class="principle-icon">✏️</div>
+      <div class="principle-step">NODE 02</div>
+      <div class="principle-title">智能手写笔</div>
+      <div class="principle-desc">笔尖内置高速摄像头，实时捕捉点阵位置与书写轨迹，批改过程动态上传云端。</div>
+    </div>
+    <div class="principle-node" data-color="gold">
+      <div class="principle-icon">☁️</div>
+      <div class="principle-step">NODE 03</div>
+      <div class="principle-title">云平台分析</div>
+      <div class="principle-desc">数据即时汇聚分析，生成错题本、学情统计与教学建议，驱动精准施教与科学决策。</div>
+    </div>
+  </div>
+  <div class="principle-quote">
+    <span class="b">点阵码</span> + <span class="l">智能手写笔</span> = 传统纸笔接入 <span class="g">数据世界</span>
+  </div>
+</section>
+
+<!-- 教师场景 -->
+<section id="teacher">
+  <div class="section-num">STEP 04 — 应用场景</div>
+  <h2 class="section-title">教师批改，<span class="hl-blue">动态采集</span></h2>
+  <p class="section-sub">笔尖所到，数据即达。真实、高频、日常的批改场景，自然产生数据。</p>
+  <div class="teacher-wrap">
+    <div class="teacher-visual">
+      <div class="teacher-tag">批改即采集 · 实时同步</div>
+      <canvas id="teacherCanvas" class="teacher-canvas"></canvas>
+      <div class="teacher-data-panel">
+        <div class="teacher-data-row"><span class="label">已批改</span><span class="val" id="tcGraded">0 份</span></div>
+        <div class="teacher-data-row"><span class="label">采集轨迹</span><span class="val" id="tcTracks">0 条</span></div>
+        <div class="teacher-data-row"><span class="label">识别知识点</span><span class="val" id="tcKP">0 个</span></div>
+      </div>
+    </div>
+    <div class="teacher-info">
+      <h3>每一次批改，都是一次数据采集</h3>
+      <p>教师用智慧笔在纸质作业和试卷上正常批改。笔尖划过纸面的瞬间，对错标记、批注轨迹、批改时间、知识点关联被动态采集，数据流从纸面升腾，进入班级学情池。</p>
+      <ul class="teacher-feats">
+        <li>对错标记自动识别，批改结果即时数字化</li>
+        <li>批注笔迹完整留存，支持回溯与共享</li>
+        <li>知识点自动关联，错题标签精准打标</li>
+        <li>批改效率量化，班级学情自动汇聚</li>
+      </ul>
+      <div class="teacher-bigquote">批改即采集</div>
+    </div>
+  </div>
+</section>
+
+<!-- 错题本 -->
+<section id="errorbook">
+  <div class="section-num">STEP 05 — 专属错题本</div>
+  <h2 class="section-title">即时生成，<span class="hl-lime">举一反三</span></h2>
+  <p class="section-sub">不是多做题，而是做对题；不是统一推送，而是以学习者为中心。</p>
+  <div class="errorbook-wrap">
+    <div class="errorbook-info">
+      <h3>学生专属错题本</h3>
+      <p>每道错题自动归集，系统推送对应知识点学习资源与变式练习。青柠色成长路径从错题节点延伸到掌握节点，构建以学习者为中心的学业评价体系。</p>
+      <div class="errorbook-tags">
+        <span class="err-tag">自动归集错题</span>
+        <span class="err-tag">知识点资源推送</span>
+        <span class="err-tag">变式练习</span>
+        <span class="err-tag">掌握度追踪</span>
+        <span class="err-tag">个性化学情</span>
+      </div>
+      <div class="errorbook-quote">以学习者为中心，构建学业评价新闭环</div>
+      <div class="errorbook-quote-sub">错题即资源，掌握即成长</div>
+    </div>
+    <div class="errorbook-path" id="errPath">
+      <div class="path-node"><span class="pdot"></span><span class="plabel">错题归集：二次函数图像与性质</span><span class="pmeta">3 题</span></div>
+      <div class="path-node"><span class="pdot"></span><span class="plabel">知识点资源推送：抛物线顶点公式</span><span class="pmeta">2 资源</span></div>
+      <div class="path-node"><span class="pdot"></span><span class="plabel">变式练习推送：同类型 5 题</span><span class="pmeta">5 题</span></div>
+      <div class="path-node master"><span class="pdot"></span><span class="plabel">掌握确认：二次函数专题</span><span class="pmeta">已掌握 ✓</span></div>
+      <div class="path-node master"><span class="pdot"></span><span class="plabel">成长路径延伸：函数综合应用</span><span class="pmeta">进阶中</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 驾驶舱 -->
+<section id="dashboard">
+  <div class="section-num">STEP 06 — 学情驾驶舱</div>
+  <h2 class="section-title">从经验判断，到<span class="hl-gold">数据决策</span></h2>
+  <p class="section-sub">即时生成班级、年级、区域学情统计与分析。教师看到精准施教建议，管理者看到科学决策依据。</p>
+  <div class="dash-stats">
+    <div class="dash-stat" data-c="blue">
+      <div class="dash-stat-num" data-target="1280">0</div>
+      <div class="dash-stat-label">日采集批改数据（条）</div>
+    </div>
+    <div class="dash-stat" data-c="lime">
+      <div class="dash-stat-num" data-target="3560">0</div>
+      <div class="dash-stat-label">累计归集错题（题）</div>
+    </div>
+    <div class="dash-stat" data-c="gold">
+      <div class="dash-stat-num" data-target="42">0</div>
+      <div class="dash-stat-label">知识点掌握度分析（项）</div>
+    </div>
+    <div class="dash-stat" data-c="blue">
+      <div class="dash-stat-num" data-target="8">0</div>
+      <div class="dash-stat-label">覆盖学校（所）</div>
+    </div>
+  </div>
+  <div class="dash-charts">
+    <div class="dash-card">
+      <div class="dash-card-title">知识点掌握度分布</div>
+      <div class="chart-wrap"><canvas id="chartMastery"></canvas></div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-card-title">学情趋势（近 4 周）</div>
+      <div class="chart-wrap"><canvas id="chartTrend"></canvas></div>
+    </div>
+  </div>
+  <div class="dash-quote">从经验判断，到数据决策</div>
+</section>
+
+<!-- 价值证明 -->
+<section id="value">
+  <div class="section-num">STEP 07 — 价值证明</div>
+  <h2 class="section-title">可量化的<span class="hl-gold">教育成效</span></h2>
+  <p class="section-sub">批改数据自动沉淀，错题资源精准推送，学情分析即时生成。</p>
+  <div class="value-stats">
+    <div class="value-stat"><div class="value-stat-num" data-target="72">0</div><div class="value-stat-label">批改效率提升（%）</div></div>
+    <div class="value-stat"><div class="value-stat-num" data-target="3">0</div><div class="value-stat-label">学情反馈提速（倍）</div></div>
+    <div class="value-stat"><div class="value-stat-num" data-target="85">0</div><div class="value-stat-label">错题归集率（%）</div></div>
+    <div class="value-stat"><div class="value-stat-num" data-target="96">0</div><div class="value-stat-label">教师满意度（%）</div></div>
+  </div>
+  <div class="value-compare">
+    <div class="compare-card before">
+      <h4>使用前</h4>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>批改耗时</span><span>3h+</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" style="width:15%"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>错题归集</span><span>15%</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" style="width:15%"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>学情反馈</span><span>7天</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" style="width:20%"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>数据决策支撑</span><span>弱</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" style="width:10%"></div></div>
+      </div>
+    </div>
+    <div class="compare-card after">
+      <h4>使用后</h4>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>批改耗时</span><span>50min</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" data-w="85" style="width:0"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>错题归集</span><span>95%</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" data-w="95" style="width:0"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>学情反馈</span><span>即时</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" data-w="92" style="width:0"></div></div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-row-label"><span>数据决策支撑</span><span>强</span></div>
+        <div class="compare-bar"><div class="compare-bar-fill" data-w="90" style="width:0"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="cta-wrap">
+    <h2 class="cta-title">开启<span class="g">纸笔智联</span>的学情数据引擎</h2>
+    <p class="cta-desc">预约演示，专属顾问将在短时间内联系，为您定制智慧笔落地方案。</p>
+    <div class="cta-progress" id="ctaProgress">
+      <div class="cta-prog-seg b1 active"></div>
+      <div class="cta-prog-seg b2"></div>
+      <div class="cta-prog-seg b3"></div>
+    </div>
+    <form class="cta-form" id="ctaForm" onsubmit="return false">
+      <div class="cta-step active" data-step="1">
+        <div class="form-group">
+          <label>您的称呼 *</label>
+          <input type="text" placeholder="请输入姓名" required>
+        </div>
+        <div class="form-group">
+          <label>联系电话 *</label>
+          <input type="tel" placeholder="请输入手机号" required>
+        </div>
+        <div class="cta-form-actions">
+          <button type="button" class="btn-next" onclick="nextStep(2)">下一步</button>
+        </div>
+      </div>
+      <div class="cta-step" data-step="2">
+        <div class="form-group">
+          <label>所在单位 *</label>
+          <input type="text" placeholder="学校 / 教育局 / 企业名称" required>
+        </div>
+        <div class="form-group">
+          <label>关注方向</label>
+          <select>
+            <option>教师批改数据采集</option>
+            <option>学生错题本与个性化学习</option>
+            <option>区域学情驾驶舱与决策</option>
+            <option>整体智慧教育解决方案</option>
+          </select>
+        </div>
+        <div class="cta-form-actions">
+          <button type="button" class="btn-prev" onclick="prevStep(1)">上一步</button>
+          <button type="button" class="btn-next" onclick="nextStep(3)">下一步</button>
+        </div>
+      </div>
+      <div class="cta-step" data-step="3">
+        <div class="form-group">
+          <label>备注需求（选填）</label>
+          <input type="text" placeholder="简要描述您的需求或场景">
+        </div>
+        <div class="cta-form-actions">
+          <button type="button" class="btn-prev" onclick="prevStep(2)">上一步</button>
+          <button type="submit" class="btn-next" onclick="submitForm()">提交预约</button>
+        </div>
+      </div>
+      <div class="cta-success" id="ctaSuccess">
+        <div class="cta-success-icon">✓</div>
+        <h3>预约成功</h3>
+        <p>专属顾问将在短时间内联系您，请保持电话畅通。</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">
+    <div class="nav-logo-box">華</div>
+    <span class="nav-logo-text">华腾智慧笔</span>
+  </div>
+  <div class="footer-text">纸笔不改，数据自来 · 华腾智慧笔 © 2026</div>
+</footer>
+
+<script>
+/* ============================================================
+   工具函数
+============================================================ */
+const $ = s=>document.querySelector(s);
+const $$ = s=>document.querySelectorAll(s);
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+/* ============================================================
+   预加载动画：三色粒子聚合成笔尖，品牌爆发
+============================================================ */
+(function preloader(){
+  const canvas=$('#preCanvas'), ctx=canvas.getContext('2d');
+  let W,H,particles=[],started=false,done=false;
+  const C=[
+    [24,143,255],   // blue
+    [190,220,14],   // lime
+    [255,193,0],    // gold
+  ];
+  function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<140;i++){
+    particles.push({
+      x:Math.random()*W, y:Math.random()*H,
+      tx:W/2+(Math.random()-.5)*60, ty:H/2+(Math.random()-.5)*60,
+      c:C[Math.floor(Math.random()*3)],
+      r:Math.random()*2+1, spd:Math.random()*.015+.008,
+      t:Math.random(), phase:0
+    });
+  }
+  let startTime=performance.now();
+  function loop(now){
+    if(done)return;
+    const elapsed=(now-startTime)/1000;
+    ctx.clearRect(0,0,W,H);
+    // draw dot grid faint
+    ctx.globalAlpha=.12;
+    ctx.fillStyle='#fff';
+    for(let x=0;x<W;x+=32){for(let y=0;y<H;y+=32){ctx.fillRect(x,y,1,1)}}
+    ctx.globalAlpha=1;
+    particles.forEach(p=>{
+      if(elapsed<2.2){
+        // converge
+        p.t+=p.spd;
+        if(p.t>1)p.t=1;
+        p.x+=(p.tx-p.x)*p.t*.1;
+        p.y+=(p.ty-p.y)*p.t*.1;
+      }else{
+        // burst
+        if(!p.bx){p.bx=(p.x-W/2)*.08+ (Math.random()-.5)*4; p.by=(p.y-H/2)*.08+(Math.random()-.5)*4; p.fade=1}
+        p.x+=p.bx;p.y+=p.by;p.bx*=.96;p.by*=.96;p.fade-=.02;
+        if(p.fade<0)p.fade=0;
+      }
+      const a = elapsed<2.2 ? .6+Math.sin(p.t*20)*.3 : p.fade;
+      ctx.globalAlpha=a;
+      ctx.fillStyle=`rgb(${p.c[0]},${p.c[1]},${p.c[2]})`;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.fill();
+      ctx.globalAlpha=a*.3;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r*3,0,7);ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    // brand show at 2.4s
+    if(elapsed>2.4 && !started){started=true;$('#preBrand').classList.add('show')}
+    if(elapsed>3.8 && !done){
+      done=true;
+      setTimeout(()=>{
+        $('#preloader').classList.add('done');
+        document.body.classList.remove('no-scroll');
+        initMain();
+      },600);
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
+/* ============================================================
+   主初始化
+============================================================ */
+function initMain(){
+  initScrollProgress();
+  initNav();
+  initHeroCanvas();
+  initTeacherCanvas();
+  initCounters();
+  initErrorPath();
+  initCharts();
+  initCompareBars();
+  if(!isMobile && !prefersReduced) initMouseGlow();
+}
+
+/* 滚动进度 */
+function initScrollProgress(){
+  const bar=$('#scrollProg');
+  window.addEventListener('scroll',()=>{
+    const h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?window.scrollY/h*100:0)+'%';
+  },{passive:true});
+}
+
+/* 导航 */
+function initNav(){
+  const links=$$('#navLinks a');
+  const sections=[...links].map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  window.addEventListener('scroll',()=>{
+    let cur=sections[0];
+    sections.forEach(s=>{if(s && s.getBoundingClientRect().top<=120)cur=s});
+    links.forEach(a=>a.classList.toggle('active',cur && a.getAttribute('href')==='#'+cur.id));
+  },{passive:true});
+  $('#menuBtn').addEventListener('click',()=>$('#navLinks').classList.toggle('open'));
+  links.forEach(a=>a.addEventListener('click',()=>$('#navLinks').classList.remove('open')));
+}
+
+/* 鼠标光晕 */
+function initMouseGlow(){
+  const g=$('#mouseGlow');
+  window.addEventListener('mousemove',e=>{
+    g.style.left=e.clientX+'px';g.style.top=e.clientY+'px';
+  });
+}
+
+/* ============================================================
+   Hero Canvas：笔尖光轨 + 三色数据流
+============================================================ */
+function initHeroCanvas(){
+  const canvas=$('#heroCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let W,H,trail=[],pulses=[],frame=0;
+  function resize(){const r=canvas.getBoundingClientRect();W=canvas.width=r.width;H=canvas.height=r.height}
+  resize();window.addEventListener('resize',resize);
+  const colors=['#188FFF','#BEDC0E','#FFC100'];
+  function spawnPulse(){
+    const c=colors[frame%3];
+    pulses.push({x:W*.3+(Math.random()-.5)*100,y:H*.5+(Math.random()-.5)*80,r:0,maxR:80+Math.random()*60,c,a:1});
+  }
+  function loop(){
+    frame++;
+    ctx.clearRect(0,0,W,H);
+    // paper grid
+    ctx.globalAlpha=.08;ctx.strokeStyle='#188FFF';ctx.lineWidth=1;
+    for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke()}
+    for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke()}
+    ctx.globalAlpha=1;
+    // pen tip light trail — sine wave across
+    trail.unshift({x:W*.2+Math.sin(frame*.02)*W*.3, y:H*.5+Math.sin(frame*.03)*30});
+    if(trail.length>50)trail.pop();
+    for(let i=0;i<trail.length;i++){
+      const t=trail[i],a=1-i/trail.length;
+      ctx.globalAlpha=a*.6;
+      ctx.fillStyle=colors[i%3];
+      ctx.beginPath();ctx.arc(t.x,t.y,3-i*.04,0,7);ctx.fill();
+    }
+    ctx.globalAlpha=1;
+    // pulses converging to right (data panel)
+    if(frame%20===0)spawnPulse();
+    pulses=pulses.filter(p=>{
+      p.r+=2.5;p.a-=.012;
+      if(p.a<=0)return false;
+      ctx.globalAlpha=p.a*.5;
+      ctx.strokeStyle=p.c;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,7);ctx.stroke();
+      return true;
+    });
+    ctx.globalAlpha=1;
+    // glowing pen tip
+    const px=trail[0].x, py=trail[0].y;
+    const grad=ctx.createRadialGradient(px,py,0,px,py,40);
+    grad.addColorStop(0,'rgba(24,143,255,.6)');grad.addColorStop(1,'transparent');
+    ctx.fillStyle=grad;ctx.beginPath();ctx.arc(px,py,40,0,7);ctx.fill();
+    ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(px,py,4,0,7);ctx.fill();
+    requestAnimationFrame(loop);
+  }
+  if(!prefersReduced)loop();
+}
+
+/* ============================================================
+   Teacher Canvas：纸面批改模拟
+============================================================ */
+function initTeacherCanvas(){
+  const canvas=$('#teacherCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  let W,H,frame=0,graded=0,tracks=0,kp=0;
+  function resize(){const r=canvas.getBoundingClientRect();W=canvas.width=r.width;H=canvas.height=r.height}
+  resize();window.addEventListener('resize',resize);
+  // generate fake answer sheet lines
+  const lines=[];
+  for(let i=0;i<8;i++)lines.push({y:60+i*42,checked:false,mark:null});
+  let curLine=0,penX=60,marking=false,markType=0;
+  function loop(){
+    frame++;
+    ctx.clearRect(0,0,W,H);
+    // paper bg
+    ctx.fillStyle='rgba(255,255,255,.02)';ctx.fillRect(0,0,W,H);
+    // answer lines
+    lines.forEach((l,i)=>{
+      ctx.globalAlpha=.3;ctx.strokeStyle='#8A94A8';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(60,l.y);ctx.lineTo(W-60,l.y);ctx.stroke();
+      // check marks
+      if(l.checked){
+        ctx.globalAlpha=.9;
+        if(l.mark==='√'){ctx.strokeStyle='#BEDC0E';ctx.lineWidth=3;
+          ctx.beginPath();ctx.moveTo(W-90,l.y-14);ctx.lineTo(W-78,l.y);ctx.lineTo(W-60,l.y-18);ctx.stroke();}
+        else{ctx.strokeStyle='#FF6B6B';ctx.lineWidth=3;
+          ctx.beginPath();ctx.moveTo(W-90,l.y-14);ctx.lineTo(W-60,l.y);ctx.moveTo(W-60,l.y-14);ctx.lineTo(W-90,l.y);ctx.stroke();}
+      }
+      ctx.globalAlpha=1;
+    });
+    // pen movement
+    const line=lines[curLine];
+    if(line){
+      penX+=3;
+      if(penX>W-100 && !marking){
+        marking=true;markType=Math.random()>.4?'√':'×';
+        line.checked=true;line.mark=markType;
+        tracks++;kp+=markType==='×'?1:0;
+        if(frame%30===0){graded++;$('#tcGraded').textContent=graded+' 份'}
+        $('#tcTracks').textContent=tracks+' 条';
+        $('#tcKP').textContent=kp+' 个';
+      }
+      if(marking){
+        penX=60;curLine++;marking=false;
+        if(curLine>=lines.length){curLine=0;lines.forEach(l=>{l.checked=false;l.mark=null});graded=0;tracks=0;kp=0;
+          $('#tcGraded').textContent='0 份';$('#tcTracks').textContent='0 条';$('#tcKP').textContent='0 个';}
+      }
+      // draw pen
+      const grad=ctx.createRadialGradient(penX,line.y,0,penX,line.y,24);
+      grad.addColorStop(0,'rgba(24,143,255,.7)');grad.addColorStop(1,'transparent');
+      ctx.fillStyle=grad;ctx.beginPath();ctx.arc(penX,line.y,24,0,7);ctx.fill();
+      ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(penX,line.y,3,0,7);ctx.fill();
+      // trail
+      ctx.globalAlpha=.4;ctx.fillStyle='#188FFF';
+      ctx.beginPath();ctx.arc(penX-4,line.y,1.5,0,7);ctx.fill();
+      ctx.globalAlpha=1;
+    }
+    requestAnimationFrame(loop);
+  }
+  if(!prefersReduced)loop();
+}
+
+/* ============================================================
+   数字滚动
+============================================================ */
+function initCounters(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        const el=e.target,target=+el.dataset.target,suffix=el.textContent.replace(/[0-9]/g,'').trim();
+        let cur=0,step=target/60;
+        const t=setInterval(()=>{
+          cur+=step;
+          if(cur>=target){cur=target;clearInterval(t)}
+          el.textContent=Math.floor(cur)+suffix;
+        },16);
+        io.unobserve(el);
+      }
+    });
+  },{threshold:.4});
+  $$('[data-target]').forEach(el=>io.observe(el));
+}
+
+/* ============================================================
+   错题本路径动画
+============================================================ */
+function initErrorPath(){
+  const nodes=$$('#errPath .path-node');
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        nodes.forEach((n,i)=>setTimeout(()=>n.classList.add('show'),i*200));
+        io.disconnect();
+      }
+    });
+  },{threshold:.3});
+  const wrap=$('#errPath');
+  if(wrap)io.observe(wrap);
+}
+
+/* ============================================================
+   图表
+============================================================ */
+function initCharts(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        drawMastery();drawTrend();
+        io.disconnect();
+      }
+    });
+  },{threshold:.3});
+  const sec=$('#dashboard');
+  if(sec)io.observe(sec);
+}
+function drawMastery(){
+  const ctx=$('#chartMastery');
+  if(!ctx||!window.Chart)return;
+  new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:['函数','几何','代数','概率','统计','三角'],
+      datasets:[{
+        label:'掌握度(%)',
+        data:[78,65,88,72,81,59],
+        backgroundColor:['rgba(24,143,255,.7)','rgba(190,220,14,.7)','rgba(24,143,255,.7)','rgba(255,193,0,.7)','rgba(24,143,255,.7)','rgba(190,220,14,.7)'],
+        borderRadius:6,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        x:{ticks:{color:'#8A94A8'},grid:{display:false}},
+        y:{ticks:{color:'#8A94A8'},grid:{color:'rgba(255,255,255,.05)'},max:100}
+      },
+      animation:{duration:1500,easing:'easeOutQuart'}
+    }
+  });
+}
+function drawTrend(){
+  const ctx=$('#chartTrend');
+  if(!ctx||!window.Chart)return;
+  new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:['第1周','第2周','第3周','第4周'],
+      datasets:[
+        {label:'班级平均',data:[62,68,74,82],borderColor:'#188FFF',backgroundColor:'rgba(24,143,255,.1)',fill:true,tension:.4},
+        {label:'错题掌握',data:[45,58,70,85],borderColor:'#BEDC0E',backgroundColor:'rgba(190,220,14,.08)',fill:true,tension:.4},
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8A94A8'}}},
+      scales:{
+        x:{ticks:{color:'#8A94A8'},grid:{display:false}},
+        y:{ticks:{color:'#8A94A8'},grid:{color:'rgba(255,255,255,.05)'}}
+      },
+      animation:{duration:1500,easing:'easeOutQuart'}
+    }
+  });
+}
+
+/* ============================================================
+   对比条动画
+============================================================ */
+function initCompareBars(){
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>{
+      if(e.isIntersecting){
+        $$('.compare-bar-fill[data-w]').forEach(b=>b.style.width=b.dataset.w+'%');
+        io.disconnect();
+      }
+    });
+  },{threshold:.3});
+  const sec=$('#value');
+  if(sec)io.observe(sec);
+}
+
+/* ============================================================
+   CTA 分步表单
+============================================================ */
+let curStep=1;
+function nextStep(n){
+  const cur=$('.cta-step.active');
+  const inputs=cur.querySelectorAll('input[required]');
+  for(const inp of inputs){if(!inp.value.trim()){inp.style.borderColor='#FF6B6B';inp.focus();return}inp.style.borderColor=''}
+  cur.classList.remove('active');
+  $(`.cta-step[data-step="${n}"]`).classList.add('active');
+  curStep=n;
+  $$('.cta-prog-seg').forEach((s,i)=>s.classList.toggle('active',i<n));
+}
+function prevStep(n){
+  $('.cta-step.active').classList.remove('active');
+  $(`.cta-step[data-step="${n}"]`).classList.add('active');
+  curStep=n;
+  $$('.cta-prog-seg').forEach((s,i)=>s.classList.toggle('active',i<n));
+}
+function submitForm(){
+  const cur=$('.cta-step.active');
+  const inputs=cur.querySelectorAll('input[required]');
+  for(const inp of inputs){if(!inp.value.trim()){inp.style.borderColor='#FF6B6B';inp.focus();return}}
+  $$('.cta-step').forEach(s=>s.classList.remove('active'));
+  $('#ctaSuccess').classList.add('show');
+  $$('.cta-prog-seg').forEach(s=>s.classList.add('active'));
+}
+</script>
+</body>
+</html>

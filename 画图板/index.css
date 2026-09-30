@@ -1,0 +1,15 @@
+*{margin: 0;padding: 0;}
+#toolbar ul{display: flex;gap: 10px;margin: 10px}
+#toolbar ul li{list-style: none;}
+#toolbar #boldBtn{width: 100px;height: 26px;}
+#toolbar button{padding: 6px 10px;user-select: none;cursor: pointer;transition: .35s;border-radius: 6px;}
+#toolbar button.active{background-color: rgb(17, 177, 177);}
+canvas{
+    border: 1px solid;
+    position: absolute;
+}
+.none{
+    display: none;
+}
+.block{display: block;}
+
